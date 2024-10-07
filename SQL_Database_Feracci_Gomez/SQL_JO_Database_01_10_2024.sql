@@ -66,7 +66,7 @@ VALUES
 ('Basketball', 60.00, 120.00, TRUE, 5),
 ('Swimming', NULL, NULL, FALSE, 1);
 
--- Insertion dans la table Events (Suppression de Event_winner)
+-- Insertion into Events table (Removed Event_winner)
 INSERT INTO Events (Event_name, Event_place, Event_date, Number_of_place, ID_sport)
 VALUES 
 ('100 meters', 'Défense Arena', '2024-07-25', 40000, 1),
@@ -75,7 +75,7 @@ VALUES
 ('Basketball Final', 'Staples Center', '2024-07-28', 20000, 4),
 ('Swimming 200m', 'Aquatics Centre', '2024-07-25', 15000, 5);
 
--- Insertion dans la table Country
+-- Insertion into Country table
 INSERT INTO Country (Country_name)
 VALUES 
 ('USA'),

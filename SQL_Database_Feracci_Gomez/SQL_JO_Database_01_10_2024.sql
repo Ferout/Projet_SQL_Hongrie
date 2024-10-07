@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS JO;
 USE JO;
 
--- Suppression des tables existantes si elles existent
+-- Drop existing tables if they exist
 DROP TABLE IF EXISTS Participate;
 DROP TABLE IF EXISTS Athletes;
 DROP TABLE IF EXISTS Country;
@@ -18,7 +18,7 @@ CREATE TABLE Sport (
     Number_of_player INT
 );
 
--- Table Events (Suppression de Event_winner)
+-- Table Events (Removed Event_winner)
 CREATE TABLE Events (
     ID_events INT PRIMARY KEY AUTO_INCREMENT,
     Event_name VARCHAR(50) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE Country (
     Country_name VARCHAR(50)
 );
 
--- Table Athletes (Suppression de la clé étrangère ID_sport)
+-- Table Athletes (Removed foreign ID_sport)
 CREATE TABLE Athletes (
     ID_Athlete INT PRIMARY KEY AUTO_INCREMENT,
     First_name VARCHAR(50),
@@ -47,17 +47,17 @@ CREATE TABLE Athletes (
     FOREIGN KEY (ID_country) REFERENCES Country(ID_country)
 );
 
--- Table Participate (Ajout du résultat de l'événement)
+-- Table Participate (Added event result)
 CREATE TABLE Participate (
     ID_Athlete INT,
     ID_events INT,
-    Result VARCHAR(50), -- Ajout de la colonne "Result" pour stocker le résultat de l'athlète
+    Result VARCHAR(50), -- Added "Result" column to store athlete's result
     PRIMARY KEY (ID_Athlete, ID_events),
     FOREIGN KEY (ID_Athlete) REFERENCES Athletes(ID_Athlete),
     FOREIGN KEY (ID_events) REFERENCES Events(ID_events)
 );
 
--- Insertion dans la table Sport
+-- Insertion into Sport table
 INSERT INTO Sport (Sport_name, Minimum_weight, Maximum_weight, Team_sport, Number_of_player)
 VALUES 
 ('100 meters', NULL, NULL, FALSE, 1),
@@ -84,7 +84,7 @@ VALUES
 ('Japan'),
 ('England');
 
--- Insertion dans la table Athletes (Suppression de ID_sport)
+-- Insertion into Athletes table (Removed ID_sport)
 INSERT INTO Athletes (First_name, Family_name, Age, Adress, Phone_number, ID_country)
 VALUES 
 ('Léon', 'Marchand', 22, 'Paris', '0123456789', 4),
@@ -93,7 +93,7 @@ VALUES
 ('Kevin', 'Durant', 34, 'Washington', '0123456783', 1),
 ('Katie', 'Ledecky', 27, 'Bethesda', '0123456784', 1);
 
--- Insertion dans la table Participate avec les résultats des athlètes
+-- Insertion into Participate table with athlete results
 INSERT INTO Participate (ID_Athlete, ID_events, Result)
 VALUES 
 (1, 5, '1nd place'),
@@ -102,16 +102,17 @@ VALUES
 (4, 4, '1st place'),
 (5, 4, '4st place');
 
--- Sélectionner toutes les données de la table Athletes
+-- Select all data from Athletes table
 SELECT * FROM Athletes;
 
--- Sélectionner tous les événements
+-- Select all events
 SELECT * FROM Events;
 
--- Sélectionner tous les pays
+-- Select all countries
 SELECT * FROM Country;
 
--- Sélectionner toutes les participations avec les résultats
+-- Select all participations with results
 SELECT * FROM Participate;
 
+-- Select all sports
 SELECT * FROM sport;

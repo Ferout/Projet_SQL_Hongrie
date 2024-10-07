@@ -3,8 +3,8 @@ Projet_SQL_Hongrie
 
 Object-oriented Analysis and Design with UML.
 
-ESSCA.
-09/2024.
+ESSCA/EFFREI
+09/10/2024.
 Gomez Luka And Feracci Aurélien.
 
 We have chosen to make a synthetic representation of the organization of the Olympic Games.

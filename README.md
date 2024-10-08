@@ -3,7 +3,7 @@ Projet_SQL_Hongrie
 
 Object-oriented Analysis and Design with UML.
 
-ESSCA/EFFREI
+ESSCA/EFREI
 09/10/2024.
 Gomez Luka And Feracci Aurélien.
 

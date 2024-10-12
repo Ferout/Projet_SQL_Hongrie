@@ -1,0 +1,16 @@
+<template>
+    <div class="hello">
+      <p>
+        ACTION = {{ action }}<br />
+        ID = {{ id }}<br />
+       
+      </p>
+  
+      <!-- Datasheet view: /cars/show/42 -->
+      <table v-if="action === 'show'" class="table table-striped table-bordered table-hover">
+        <tr><td>CAR NAME</td><td></td></tr>
+        <tr><td>BASE PRICE</td><td></td></tr>
+        <tr><td>IS FANCY?</td><td></td></tr>
+        <tr><td>REAL PRICE</td><td></td></tr>
+      </table>
+  

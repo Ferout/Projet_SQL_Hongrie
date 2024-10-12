@@ -1,113 +1,82 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+  <div>
+    <h1>Liste des Athlètes</h1>
+    <table>
+      <tr>
+        <th>ID</th><th>Prénom</th><th>Nom</th><th>Âge</th><th>Pays</th>
+      </tr>
+      <tr v-for="athlete in athletes" :key="athlete.ID_Athlete">
+        <td>{{ athlete.ID_Athlete }}</td>
+        <td>{{ athlete.First_name }}</td>
+        <td>{{ athlete.Family_name }}</td>
+        <td>{{ athlete.Age }}</td>
+        <td>{{ athlete.ID_country }}</td>
+      </tr>
+    </table>
+
+    <h1>Liste des Événements</h1>
+    <table>
+      <tr>
+        <th>ID</th><th>Nom</th><th>Lieu</th><th>Date</th><th>Places</th>
+      </tr>
+      <tr v-for="event in events" :key="event.ID_events">
+        <td>{{ event.ID_events }}</td>
+        <td>{{ event.Event_name }}</td>
+        <td>{{ event.Event_place }}</td>
+        <td>{{ event.Event_date }}</td>
+        <td>{{ event.Number_of_place }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'HelloWorld',
-  data () {
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      athletes: [],
+      events: []
+    };
+  },
+  created() {
+    this.getAthletes();
+    this.getEvents();
+  },
+  methods: {
+    async getAthletes() {
+      try {
+        const response = await axios.get('http://localhost:3000/athletes');
+        this.athletes = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getEvents() {
+      try {
+        const response = await axios.get('http://localhost:3000/events');
+        this.events = response.data;
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
-}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
+<style>
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+table, th, td {
+  border: 1px solid black;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+
+th, td {
+  padding: 10px;
+  text-align: left;
 }
 </style>

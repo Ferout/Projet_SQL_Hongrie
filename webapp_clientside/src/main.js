@@ -1,10 +1,15 @@
-import Vue from 'vue';
-import App from './App.vue'; // Assurez-vous que ce chemin est correct
-import router from './router'; // Assurez-vous que le routeur est bien importé
+// The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import Vue from 'vue'
+import App from './App'
+import router from './router'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
+/* eslint-disable no-new */
 new Vue({
+  el: '#app',
   router,
-  render: h => h(App),
-}).$mount('#app');
+  components: { App },
+  template: '<App/>'
+})

@@ -1,0 +1,1 @@
+If you want to launch our gantt diagram, you need to download the Gantt file and to open it from this website : https://www.onlinegantt.com/#/gantt

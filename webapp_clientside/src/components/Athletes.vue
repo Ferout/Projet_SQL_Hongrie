@@ -1,66 +1,116 @@
 <template>
-    <div class="athletes">
-      <h2>Athletes</h2>
-      <table v-if="action === 'list'" class="table table-striped">
-        <tr>
-          <th>ID</th><th>First Name</th><th>Family Name</th><th>Country</th><th>Actions</th>
-        </tr>
-        <tr v-for="athlete in athletes" :key="athlete.ID_Athlete">
-          <td>{{ athlete.ID_Athlete }}</td>
-          <td>{{ athlete.First_name }}</td>
-          <td>{{ athlete.Family_name }}</td>
-          <td>{{ getCountryName(athlete.ID_country) }}</td>
-          <td>
-            <a :href="'/#/athletes/show/' + athlete.ID_Athlete">Show</a> | 
-            <a :href="'/#/athletes/edit/' + athlete.ID_Athlete">Edit</a> | 
-            <button @click="deleteAthlete(athlete.ID_Athlete)">Delete</button>
-          </td>
-        </tr>
+    <div class="athletes-container">
+      <h2>Athletes List</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Family Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Country</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Léon</td>
+            <td>Marchand</td>
+            <td>22</td>
+            <td>Paris</td>
+            <td>0123456789</td>
+            <td>France</td>
+          </tr>
+          <tr>
+            <td>Scott</td>
+            <td>D.</td>
+            <td>36</td>
+            <td>London</td>
+            <td>0123456781</td>
+            <td>England</td>
+          </tr>
+          <tr>
+            <td>Wang</td>
+            <td>S.</td>
+            <td>32</td>
+            <td>Tokyo</td>
+            <td>0123456782</td>
+            <td>China</td>
+          </tr>
+          <tr>
+            <td>Kevin</td>
+            <td>Durant</td>
+            <td>34</td>
+            <td>Washington</td>
+            <td>0123456783</td>
+            <td>USA</td>
+          </tr>
+          <tr>
+            <td>Katie</td>
+            <td>Ledecky</td>
+            <td>27</td>
+            <td>Bethesda</td>
+            <td>0123456784</td>
+            <td>USA</td>
+          </tr>
+        </tbody>
       </table>
+  
+      <!-- Button to go back to Home -->
+      <button @click="goToHomePage" class="home-button">Back to Home</button>
     </div>
   </template>
   
   <script>
   export default {
-    props: ['action', 'id'],
-    data() {
-      return {
-        athletes: [],
-        countries: []
-      };
-    },
+    name: 'Athletes',
     methods: {
-      fetchAthletes() {
-        // Simulated data, replace with API call
-        this.athletes = [
-          { ID_Athlete: 1, First_name: 'Léon', Family_name: 'Marchand', ID_country: 4 },
-          { ID_Athlete: 2, First_name: 'Scott', Family_name: 'D.', ID_country: 5 }
-        ];
-        this.countries = [
-          { ID_country: 1, Country_name: "USA" },
-          { ID_country: 2, Country_name: "China" },
-          { ID_country: 3, Country_name: "France" },
-          { ID_country: 4, Country_name: "Japan" },
-          { ID_country: 5, Country_name: "England" }
-        ];
-      },
-      getCountryName(countryID) {
-        const country = this.countries.find(c => c.ID_country === countryID);
-        return country ? country.Country_name : 'Unknown';
-      },
-      deleteAthlete(id) {
-        console.log('Deleting athlete with ID:', id);
+      goToHomePage() {
+        this.$router.push('/'); // Redirects to the home page
       }
-    },
-    created() {
-      this.fetchAthletes();
     }
-  };
+  }
   </script>
   
   <style scoped>
-  .table {
+  .athletes-container {
+    text-align: center;
+    margin: 40px;
+  }
+  
+  .info-table {
     width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .info-table th,
+  .info-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .info-table th {
+    background-color: #42b883;
+    color: white;
+  }
+  
+  /* Button styles */
+  .home-button {
+    background-color: #42b883;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .home-button:hover {
+    background-color: #36a76e; /* Darker green on hover */
   }
   </style>
   

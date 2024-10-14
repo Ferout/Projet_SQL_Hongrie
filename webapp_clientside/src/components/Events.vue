@@ -1,45 +1,104 @@
 <template>
-    <div class="events">
-      <h2>Events</h2>
-      <table class="table table-striped">
-        <tr>
-          <th>ID</th><th>Event Name</th><th>Place</th><th>Date</th>
-        </tr>
-        <tr v-for="event in events" :key="event.ID_events">
-          <td>{{ event.ID_events }}</td>
-          <td>{{ event.Event_name }}</td>
-          <td>{{ event.Event_place }}</td>
-          <td>{{ event.Event_date }}</td>
-        </tr>
+    <div class="events-container">
+      <h2>Olympic Events</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Place</th>
+            <th>Event Date</th>
+            <th>Number of Places</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>100 meters</td>
+            <td>Défense Arena</td>
+            <td>2024-07-25</td>
+            <td>40000</td>
+          </tr>
+          <tr>
+            <td>200 meters</td>
+            <td>Stade Olympique</td>
+            <td>2024-07-26</td>
+            <td>80000</td>
+          </tr>
+          <tr>
+            <td>Football Final</td>
+            <td>Wembley Stadium</td>
+            <td>2024-07-27</td>
+            <td>90000</td>
+          </tr>
+          <tr>
+            <td>Basketball Final</td>
+            <td>Staples Center</td>
+            <td>2024-07-28</td>
+            <td>20000</td>
+          </tr>
+          <tr>
+            <td>Swimming 200m</td>
+            <td>Aquatics Centre</td>
+            <td>2024-07-25</td>
+            <td>15000</td>
+          </tr>
+        </tbody>
       </table>
+  
+      <!-- Button to go back to Home -->
+      <button @click="goToHomePage" class="home-button">Back to Home</button>
     </div>
   </template>
   
   <script>
   export default {
-    data() {
-      return {
-        events: []
-      };
-    },
+    name: 'Events',
     methods: {
-      fetchEvents() {
-        // Simulated data, replace with API call
-        this.events = [
-          { ID_events: 1, Event_name: '100 meters', Event_place: 'Défense Arena', Event_date: '2024-07-25' },
-          { ID_events: 2, Event_name: 'Football Final', Event_place: 'Wembley Stadium', Event_date: '2024-07-27' }
-        ];
+      goToHomePage() {
+        this.$router.push('/'); // Redirects to the home page
       }
-    },
-    created() {
-      this.fetchEvents();
     }
-  };
+  }
   </script>
   
   <style scoped>
-  .table {
-    width: 100%;
+  .events-container {
+    text-align: center;
+    margin: 40px;
+  }
+  
+  .info-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .info-table th,
+  .info-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .info-table th {
+    background-color: #42b883;
+    color: white;
+  }
+  
+  /* Button styles */
+  .home-button {
+    background-color: #42b883;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .home-button:hover {
+    background-color: #36a76e; /* Darker green on hover */
   }
   </style>
   

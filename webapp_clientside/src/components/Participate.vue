@@ -1,44 +1,98 @@
 <template>
-    <div class="participations">
-      <h2>Participations</h2>
-      <table class="table table-striped">
-        <tr>
-          <th>Athlete ID</th><th>Event ID</th><th>Result</th>
-        </tr>
-        <tr v-for="participation in participations" :key="participation.ID_Athlete + '-' + participation.ID_events">
-          <td>{{ participation.ID_Athlete }}</td>
-          <td>{{ participation.ID_events }}</td>
-          <td>{{ participation.Result }}</td>
-        </tr>
+    <div class="participate-container">
+      <h2>Athletes' Participation Results</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Athlete ID</th>
+            <th>Event ID</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>5</td>
+            <td>1st place</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>5</td>
+            <td>2nd place</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>5</td>
+            <td>3rd place</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>4</td>
+            <td>1st place</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>4</td>
+            <td>4th place</td>
+          </tr>
+        </tbody>
       </table>
+  
+      <!-- Button to go back to Home -->
+      <button @click="goToHomePage" class="home-button">Back to Home</button>
     </div>
   </template>
   
   <script>
   export default {
-    data() {
-      return {
-        participations: []
-      };
-    },
+    name: 'Participate',
     methods: {
-      fetchParticipations() {
-        // Simulated data, replace with API call
-        this.participations = [
-          { ID_Athlete: 1, ID_events: 5, Result: '1st place' },
-          { ID_Athlete: 2, ID_events: 4, Result: '2nd place' }
-        ];
+      goToHomePage() {
+        this.$router.push('/'); // Redirects to the home page
       }
-    },
-    created() {
-      this.fetchParticipations();
     }
-  };
+  }
   </script>
   
   <style scoped>
-  .table {
-    width: 100%;
+  .participate-container {
+    text-align: center;
+    margin: 40px;
+  }
+  
+  .info-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .info-table th,
+  .info-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .info-table th {
+    background-color: #42b883;
+    color: white;
+  }
+  
+  /* Button styles */
+  .home-button {
+    background-color: #42b883;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .home-button:hover {
+    background-color: #36a76e; /* Darker green on hover */
   }
   </style>
   

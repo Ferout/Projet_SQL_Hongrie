@@ -1,46 +1,86 @@
 <template>
-    <div class="countries">
-      <h2>Countries</h2>
-      <table class="table table-striped">
-        <tr>
-          <th>ID</th><th>Country Name</th>
-        </tr>
-        <tr v-for="country in countries" :key="country.ID_country">
-          <td>{{ country.ID_country }}</td>
-          <td>{{ country.Country_name }}</td>
-        </tr>
+    <div class="countries-container">
+      <h2>Countries Participating</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Country Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>USA</td>
+          </tr>
+          <tr>
+            <td>China</td>
+          </tr>
+          <tr>
+            <td>France</td>
+          </tr>
+          <tr>
+            <td>Japan</td>
+          </tr>
+          <tr>
+            <td>England</td>
+          </tr>
+        </tbody>
       </table>
+  
+      <!-- Button to go back to Home -->
+      <button @click="goToHomePage" class="home-button">Back to Home</button>
     </div>
   </template>
   
   <script>
   export default {
-    data() {
-      return {
-        countries: []
-      };
-    },
+    name: 'Countries',
     methods: {
-      fetchCountries() {
-        // Simulated data, replace with API call
-        this.countries = [
-          { ID_country: 1, Country_name: "USA" },
-          { ID_country: 2, Country_name: "China" },
-          { ID_country: 3, Country_name: "France" },
-          { ID_country: 4, Country_name: "Japan" },
-          { ID_country: 5, Country_name: "England" }
-        ];
+      goToHomePage() {
+        this.$router.push('/'); // Redirects to the home page
       }
-    },
-    created() {
-      this.fetchCountries();
     }
-  };
+  }
   </script>
   
   <style scoped>
-  .table {
-    width: 100%;
+  .countries-container {
+    text-align: center;
+    margin: 40px;
+  }
+  
+  .info-table {
+    width: 50%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .info-table th,
+  .info-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .info-table th {
+    background-color: #42b883;
+    color: white;
+  }
+  
+  /* Button styles */
+  .home-button {
+    background-color: #42b883;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .home-button:hover {
+    background-color: #36a76e; /* Darker green on hover */
   }
   </style>
   

@@ -1,116 +1,189 @@
 <template>
-    <div class="athletes-container">
-      <h2>Athletes List</h2>
-      <table class="info-table">
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Family Name</th>
-            <th>Age</th>
-            <th>Address</th>
-            <th>Phone Number</th>
-            <th>Country</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Léon</td>
-            <td>Marchand</td>
-            <td>22</td>
-            <td>Paris</td>
-            <td>0123456789</td>
-            <td>France</td>
-          </tr>
-          <tr>
-            <td>Scott</td>
-            <td>D.</td>
-            <td>36</td>
-            <td>London</td>
-            <td>0123456781</td>
-            <td>England</td>
-          </tr>
-          <tr>
-            <td>Wang</td>
-            <td>S.</td>
-            <td>32</td>
-            <td>Tokyo</td>
-            <td>0123456782</td>
-            <td>China</td>
-          </tr>
-          <tr>
-            <td>Kevin</td>
-            <td>Durant</td>
-            <td>34</td>
-            <td>Washington</td>
-            <td>0123456783</td>
-            <td>USA</td>
-          </tr>
-          <tr>
-            <td>Katie</td>
-            <td>Ledecky</td>
-            <td>27</td>
-            <td>Bethesda</td>
-            <td>0123456784</td>
-            <td>USA</td>
-          </tr>
-        </tbody>
-      </table>
-  
-      <!-- Button to go back to Home -->
-      <button @click="goToHomePage" class="home-button">Back to Home</button>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'Athletes',
-    methods: {
-      goToHomePage() {
-        this.$router.push('/'); // Redirects to the home page
-      }
+  <div class="athletes-container">
+    <h2>Athletes List</h2>
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Family Name</th>
+          <th>Age</th>
+          <th>Address</th>
+          <th>Phone Number</th>
+          <th>Country</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(athlete, index) in athletes" :key="index">
+          <td v-if="editIndex !== index">{{ athlete.firstName }}</td>
+          <td v-else><input v-model="athlete.firstName" /></td>
+          
+          <td v-if="editIndex !== index">{{ athlete.familyName }}</td>
+          <td v-else><input v-model="athlete.familyName" /></td>
+          
+          <td v-if="editIndex !== index">{{ athlete.age }}</td>
+          <td v-else><input v-model="athlete.age" type="number" /></td>
+          
+          <td v-if="editIndex !== index">{{ athlete.address }}</td>
+          <td v-else><input v-model="athlete.address" /></td>
+          
+          <td v-if="editIndex !== index">{{ athlete.phoneNumber }}</td>
+          <td v-else><input v-model="athlete.phoneNumber" /></td>
+          
+          <td v-if="editIndex !== index">{{ athlete.country }}</td>
+          <td v-else><input v-model="athlete.country" /></td>
+          
+          <td>
+            <button v-if="editIndex !== index" @click="editAthlete(index)">Edit</button>
+            <button v-else @click="saveEdit">Save</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Button to go back to Home -->
+    <button @click="goToHomePage" class="home-button">Back to Home</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Athletes',
+  data() {
+    return {
+      editIndex: null, // Track which row is being edited
+      athletes: this.loadAthletes() || [ // Load athletes from localStorage if available
+        {
+          firstName: 'Léon',
+          familyName: 'Marchand',
+          age: 22,
+          address: 'Paris',
+          phoneNumber: '0123456789',
+          country: 'France'
+        },
+        {
+          firstName: 'Scott',
+          familyName: 'D.',
+          age: 36,
+          address: 'London',
+          phoneNumber: '0123456781',
+          country: 'England'
+        },
+        {
+          firstName: 'Wang',
+          familyName: 'S.',
+          age: 32,
+          address: 'Tokyo',
+          phoneNumber: '0123456782',
+          country: 'China'
+        },
+        {
+          firstName: 'Kevin',
+          familyName: 'Durant',
+          age: 34,
+          address: 'Washington',
+          phoneNumber: '0123456783',
+          country: 'USA'
+        },
+        {
+          firstName: 'Katie',
+          familyName: 'Ledecky',
+          age: 27,
+          address: 'Bethesda',
+          phoneNumber: '0123456784',
+          country: 'USA'
+        }
+      ]
+    };
+  },
+  methods: {
+    goToHomePage() {
+      this.$router.push('/'); // Redirects to the home page
+    },
+    editAthlete(index) {
+      this.editIndex = index; // Set the index of the row to be edited
+    },
+    saveEdit() {
+      this.editIndex = null; // Save the changes and exit edit mode
+      this.saveAthletes();   // Save the updated athletes list to localStorage
+    },
+    saveAthletes() {
+      // Save the athletes data to localStorage
+      localStorage.setItem('athletes', JSON.stringify(this.athletes));
+    },
+    loadAthletes() {
+      // Load athletes from localStorage
+      const athletes = localStorage.getItem('athletes');
+      return athletes ? JSON.parse(athletes) : null;
+    }
+  },
+  mounted() {
+    // Load athletes when the component is mounted (for reactivity)
+    const storedAthletes = this.loadAthletes();
+    if (storedAthletes) {
+      this.athletes = storedAthletes;
     }
   }
-  </script>
-  
-  <style scoped>
-  .athletes-container {
-    text-align: center;
-    margin: 40px;
-  }
-  
-  .info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0 auto;
-  }
-  
-  .info-table th,
-  .info-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .info-table th {
-    background-color: #42b883;
-    color: white;
-  }
-  
-  /* Button styles */
-  .home-button {
-    background-color: #42b883;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-    transition: background-color 0.3s;
-  }
-  
-  .home-button:hover {
-    background-color: #36a76e; /* Darker green on hover */
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.athletes-container {
+  text-align: center;
+  margin: 40px;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.info-table th,
+.info-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.info-table th {
+  background-color: #42b883;
+  color: white;
+}
+
+/* Button styles */
+.home-button {
+  background-color: #42b883;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.home-button:hover {
+  background-color: #36a76e; /* Darker green on hover */
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #42b883;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+button:hover {
+  background-color: #36a76e;
+}
+
+input {
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+}
+</style>

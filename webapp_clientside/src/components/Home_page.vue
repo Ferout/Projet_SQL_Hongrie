@@ -54,10 +54,9 @@
   
   /* Header Styling */
   .header {
-    background-color: #42b883
-    ;
+    background-color: #42b883;
     color: white;
-    padding: 10px;
+    padding: 12.5px;
     position: fixed;
     top: 0;
     left: 0;

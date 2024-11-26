@@ -1,53 +1,64 @@
-// populate object process.env from the file .env
-const dotenv = require('dotenv');
-dotenv.config(); 
+// Charger les variables d'environnement à partir du fichier .env
+require('dotenv').config();
 
-// create express.js webapp
+// Importation des modules nécessaires
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const session = require('express-session');
+
+// Création de l'application Express
 const app = express();
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.listen(process.env.WEB_PORT, '0.0.0.0',
-    function() { console.log("Listening on "+process.env.WEB_PORT); }
-);
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
-// *** MIDDLEWARES ***
-// app.use(callbackFunction1, callbackFunction2, callbackFunction3)
+// Configuration du port du serveur à partir des variables d'environnement
+const port = process.env.WEB_PORT || 3000;
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Listening on ${port}`);
+});
 
-// process form input (create request.body from POST data or json in the http request)
-const bodyParser = require("body-parser");
-app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
+// Middleware
+app.use(cors({
+    origin: 'http://localhost:8080',  // Frontend Vue.js
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Méthodes HTTP autorisées
+    allowedHeaders: ['Content-Type', 'Authorization'],  // En-têtes autorisés
+    credentials: true  // Si vous utilisez des cookies ou des tokens
+}));
 
-// allow serverside session storage
-const session = require("express-session");
+app.use(bodyParser.json()); // Parse les données JSON
+app.use(bodyParser.urlencoded({ extended: true })); // Parse les données URL-encoded
+
+// Configuration de la session
 app.use(session({
     secret: "SecretRandomStringDskghadslkghdlkghdghaksdghdksh",
     saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day in msec
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 jour
     resave: false
-})); 
-// if (request.session.cart===undefined) request.session.cart = [];
-// request.session.cart.push("xxxx");
+}));
 
-// enable Cross Origin Resource Sharing (needed for cross-origin API)
-const cors = require('cors');
-app.use(cors());
+// Routes statiques
+app.use("/static", express.static(__dirname + '/static'));
 
-// configure passport
-// const auth = require("./utils/users.auth");
-// auth.initializeAuthentications(app);
+// Importation des contrôleurs (routes pour les entités)
+app.use("/api", require("./controllers/api.route"));
 
-// *** ROUTES/CONTROLLERS ***
-
-// setup default route
-app.get('/', (request, response) => { // 'GET' as a HTTP VERB, not as a 'getter'!
+// Route d'accueil
+app.get('/', (request, response) => {
     let clientIp = request.ip;
     response.send(`Hello, dear ${clientIp}. I am a nodejs website...`);
     response.end(); // optional
 });
 
-// setup additional routes
-// app.use(routeBase, callback);
-app.use("/static", express.static(__dirname + '/static'));
-app.use("/carsapi", require("./controllers/carsapi.route"));
-// app.use("/auth", require("./controllers/auth.route"));
+fetch('http://localhost:3000/api/countries', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer your_token_here'  // Si vous utilisez des tokens
+    },
+    credentials: 'include'  // Si vous avez besoin d'envoyer des cookies ou des sessions
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+  

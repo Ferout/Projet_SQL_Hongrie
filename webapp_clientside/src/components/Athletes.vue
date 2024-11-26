@@ -1,52 +1,37 @@
 <template>
-  <div class="athletes-container">
+  <div class="athlete-container">
     <header class="header">
       <div class="header-content">
         <span>{{ currentDate }}</span>
         <div class="nav-buttons">
+          <router-link to="/athletes">
+            <button>Athletes</button>
+          </router-link>
           <router-link to="/countries">
             <button>Countries</button>
-          </router-link>
-          <router-link to="/events">
-            <button>Events</button>
           </router-link>
           <router-link to="/sports">
             <button>Sports</button>
           </router-link>
-          <router-link to="/participate">
-            <button>Participate</button>
+          <router-link to="/events">
+            <button>Events</button>
           </router-link>
         </div>
       </div>
     </header>
 
-    <h2>Athletes Search</h2>
-
-    <div class="search-and-toggle-container">
-      <input type="text" v-model="searchQuery" @input="searchAthletes" placeholder="Search for an athlete...">
-      <button @click="toggleAthletesList" class="toggle-button">
-        {{ showAllAthletes ? 'Hide All Athletes' : 'Show All Athletes' }}
-      </button>
-    </div>
-
-    <ul v-if="filteredAthletes.length > 0 && searchQuery !== '' && !selectedAthlete && !showAllAthletes">
-      <li v-for="athlete in filteredAthletes" :key="athlete.firstName" @click="selectAthlete(athlete)">
-        {{ athlete.firstName }} {{ athlete.familyName }}
-      </li>
-    </ul>
-
-    <div v-if="selectedAthlete">
-      <h3>Details of {{ selectedAthlete.firstName }} {{ selectedAthlete.familyName }}</h3>
-      <p><strong>Age:</strong> {{ selectedAthlete.age }}</p>
-      <p><strong>Address:</strong> {{ selectedAthlete.address }}</p>
-      <p><strong>Phone Number:</strong> {{ selectedAthlete.phoneNumber }}</p>
-      <p><strong>Country:</strong> {{ selectedAthlete.country }}</p>
-    </div>
-
-    <div v-if="showAllAthletes">
+    <h2>Athletes</h2>
+    <div class="athlete-list">
       <ul>
-        <li v-for="athlete in athletes" :key="athlete.firstName" @click="selectAthlete(athlete)">
-          {{ athlete.firstName }} {{ athlete.familyName }}
+        <li v-for="athlete in athletes" :key="athlete.ID_Athlete">
+          <!-- Afficher les informations de chaque athlète -->
+          <div>
+            <p><strong>Name:</strong> {{ athlete.First_name }} {{ athlete.Family_name }}</p>
+            <p><strong>Age:</strong> {{ athlete.Age }}</p>
+            <p><strong>Address:</strong> {{ athlete.Adress }}</p>
+            <p><strong>Phone:</strong> {{ athlete.Phone_number }}</p>
+            <p><strong>Country:</strong> {{ athlete.Country_name }}</p>
+          </div>
         </li>
       </ul>
     </div>
@@ -57,62 +42,34 @@
 
 <script>
 export default {
-  name: 'Athletes',
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      searchQuery: '',
-      selectedAthlete: null,
-      showAllAthletes: false,
-      athletes: this.loadAthletes() || [
-        { firstName: 'Léon', familyName: 'Marchand', age: 22, address: 'Paris', phoneNumber: '0123456789', country: 'France' },
-        { firstName: 'Scott', familyName: 'D.', age: 36, address: 'London', phoneNumber: '0123456781', country: 'England' },
-        { firstName: 'Wang', familyName: 'S.', age: 32, address: 'Tokyo', phoneNumber: '0123456782', country: 'China' },
-        { firstName: 'Kevin', familyName: 'Durant', age: 34, address: 'Washington', phoneNumber: '0123456783', country: 'USA' },
-        { firstName: 'Katie', familyName: 'Ledecky', age: 27, address: 'Bethesda', phoneNumber: '0123456784', country: 'USA' },
-        { firstName: 'Luka', familyName: 'Modrić', age: 39, address: 'Zagreb', phoneNumber: '0123456785', country: 'Croatia' }
-      ]
+      athletes: []  // Liste des athlètes à afficher
     };
   },
-  computed: {
-    filteredAthletes() {
-      return this.athletes.filter(athlete => 
-        (athlete.firstName + ' ' + athlete.familyName).toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
-  },
   methods: {
-    goToHomePage() {
-      this.$router.push('/');
-    },
-    searchAthletes() {
-      this.selectedAthlete = null;
-      this.showAllAthletes = false;
-    },
-    selectAthlete(athlete) {
-      this.selectedAthlete = athlete;
-      this.showAllAthletes = false;
-      this.searchQuery = '';
-    },
-    toggleAthletesList() {
-      this.showAllAthletes = !this.showAllAthletes;
-      this.searchQuery = '';
-      if (this.showAllAthletes) {
-        this.selectedAthlete = null;
+    async fetchAthletes() {
+      try {
+        const response = await fetch('http://localhost:3000/api/athletes');  // Requête API pour récupérer les athlètes
+        const data = await response.json();
+        this.athletes = data;  // Assigner les athlètes récupérés au tableau
+      } catch (error) {
+        console.error("Error fetching athletes:", error);
       }
     },
-    saveAthletes() {
-      localStorage.setItem('athletes', JSON.stringify(this.athletes));
-    },
-    loadAthletes() {
-      const athletes = localStorage.getItem('athletes');
-      return athletes ? JSON.parse(athletes) : null;
+    goToHomePage() {
+      this.$router.push('/');  // Redirection vers la page d'accueil
     }
+  },
+  mounted() {
+    this.fetchAthletes();  // Appeler la méthode pour récupérer les athlètes au montage du composant
   }
 };
 </script>
 
 <style scoped>
+/* Styles pour l'affichage des athlètes */
 .header {
   background-color: #42b883;
   color: white;
@@ -156,52 +113,22 @@ export default {
   background-color: #36a76e;
 }
 
-.athletes-container {
+.athlete-container {
   text-align: center;
   margin: 40px;
 }
 
-.search-and-toggle-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-input {
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #ccc;
-  width: 200px;
-}
-
-.toggle-button {
-  background-color: #42b883;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.toggle-button:hover {
-  background-color: #36a76e;
-}
-
-ul {
+.athlete-list ul {
   list-style-type: none;
   padding: 0;
 }
 
-ul li {
+.athlete-list li {
   padding: 10px;
   cursor: pointer;
 }
 
-ul li:hover {
+.athlete-list li:hover {
   background-color: #f0f0f0;
 }
 

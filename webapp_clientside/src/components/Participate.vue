@@ -4,29 +4,31 @@
       <div class="header-content">
         <span>{{ currentDate }}</span>
         <div class="nav-buttons">
+          <router-link to="/athletes">
+            <button>Athletes</button>
+          </router-link>
           <router-link to="/countries">
             <button>Countries</button>
-          </router-link>
-          <router-link to="/events">
-            <button>Events</button>
           </router-link>
           <router-link to="/sports">
             <button>Sports</button>
           </router-link>
-          <router-link to="/athletes">
-            <button>Athletes</button>
+          <router-link to="/events">
+            <button>Events</button>
           </router-link>
         </div>
       </div>
     </header>
-    <h2>Athletes' Participation Results</h2>
-    <div class="info-table">
-      <div v-for="participant in participants" :key="participant.id" class="participant-row">
-        <p><strong>Athlete:</strong> {{ participant.name }}</p>
-        <p><strong>Event:</strong> {{ participant.event }}</p>
-        <p><strong>Result:</strong> {{ participant.result }}</p>
-      </div>
+
+    <h2>Participation</h2>
+    <div class="participation-list">
+      <ul>
+        <li v-for="participation in participations" :key="participation.id">
+          {{ participation.First_name }} {{ participation.Family_name }} - {{ participation.Event_name }} - {{ participation.Result }}
+        </li>
+      </ul>
     </div>
+
     <button @click="goToHomePage" class="home-button">Back to Home</button>
   </div>
 </template>
@@ -36,24 +38,31 @@ export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      participants: [
-        { id: 1, name: 'Léon Marchand', event: '100 meters Swimming', result: '1st place' },
-        { id: 2, name: 'Caeleb Dressel', event: '100 meters Freestyle', result: '2nd place' },
-        { id: 3, name: 'Katie Ledecky', event: '800 meters Freestyle', result: '1st place' },
-        { id: 4, name: 'Simone Biles', event: 'Gymnastics All-Around', result: '1st place' },
-        { id: 5, name: 'Usain Bolt', event: '200 meters', result: '1st place' }
-      ]
+      participations: [] // Data will be loaded from the backend
     };
   },
   methods: {
+    async fetchParticipations() {
+      try {
+        const response = await fetch('http://localhost:3000/api/participations');
+        const data = await response.json();
+        this.participations = data;
+      } catch (error) {
+        console.error("Error fetching participations:", error);
+      }
+    },
     goToHomePage() {
       this.$router.push('/');
     }
+  },
+  mounted() {
+    this.fetchParticipations(); // Fetch participations on mount
   }
-}
+};
 </script>
 
 <style scoped>
+/* Styles for the participate page */
 .header {
   background-color: #42b883;
   color: white;
@@ -102,17 +111,18 @@ export default {
   margin: 40px;
 }
 
-.info-table {
-  width: 80%;
-  margin: 0 auto;
+.participation-list ul {
+  list-style-type: none;
+  padding: 0;
 }
 
-.participant-row {
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
+.participation-list li {
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.participation-list li:hover {
+  background-color: #f0f0f0;
 }
 
 .home-button {

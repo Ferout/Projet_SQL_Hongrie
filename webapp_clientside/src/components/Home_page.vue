@@ -35,7 +35,7 @@
   
   <script>
   export default {
-    name: 'HomePage',
+    name: 'Home_page',
     data() {
       return {
         currentDate: new Date().toLocaleDateString()
@@ -75,8 +75,7 @@
   }
   
   h1 {
-    color: #42b883
-    ;
+    color: #42b883;
     font-size: 3rem;
     margin-bottom: 20px;
   }
@@ -109,7 +108,7 @@
   
   .nav-button {
     background-color: #42b883
-    ;
+;
     color: white;
     padding: 15px 30px;
     text-decoration: none;

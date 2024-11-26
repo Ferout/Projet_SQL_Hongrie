@@ -1,5 +1,5 @@
 <template>
-  <div class="countries-container">
+  <div class="events-container">
     <header class="header">
       <div class="header-content">
         <span>{{ currentDate }}</span>
@@ -7,8 +7,8 @@
           <router-link to="/athletes">
             <button>Athletes</button>
           </router-link>
-          <router-link to="/events">
-            <button>Events</button>
+          <router-link to="/countries">
+            <button>Countries</button>
           </router-link>
           <router-link to="/sports">
             <button>Sports</button>
@@ -19,18 +19,16 @@
         </div>
       </div>
     </header>
+
     <h2>Events</h2>
-    <div class="events-buttons">
-      <button v-for="event in events" :key="event.id" @click="showEventDetails(event)">
-        {{ event.name }}
-      </button>
+    <div class="events-list">
+      <ul>
+        <li v-for="event in events" :key="event.event_id">
+          {{ event.event_name }} - {{ formatDate(event.event_date) }} - {{ event.Number_of_place }} places - {{ event.Event_place }}
+        </li>
+      </ul>
     </div>
-    <div v-if="selectedEvent" class="event-details">
-      <h3>{{ selectedEvent.name }}</h3>
-      <p><strong>Description:</strong> {{ selectedEvent.description }}</p>
-      <p><strong>Date:</strong> {{ selectedEvent.date }}</p>
-      <p><strong>Location:</strong> {{ selectedEvent.location }}</p>
-    </div>
+
     <button @click="goToHomePage" class="home-button">Back to Home</button>
   </div>
 </template>
@@ -40,28 +38,57 @@ export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      selectedEvent: null,
-      events: [
-        { id: 1, name: 'Opening Ceremony', description: 'The grand opening of the Olympics', date: '2024-07-26', location: 'Paris' },
-        { id: 2, name: '100m Sprint', description: 'Men\'s 100m sprint race', date: '2024-07-28', location: 'Stade de France' },
-        { id: 3, name: 'Gymnastics Finals', description: 'Finals of the gymnastics competition', date: '2024-08-01', location: 'Bercy Arena' },
-        { id: 4, name: 'Football Final', description: 'The men\'s football final match', date: '2024-08-10', location: 'Parc des Princes' },
-        // Add more events as needed
-      ]
+      events: [] // Data will be loaded from the backend
     };
   },
   methods: {
-    showEventDetails(event) {
-      this.selectedEvent = event;
+    async fetchEvents() {
+      try {
+        const response = await fetch('http://localhost:3000/api/events');
+        
+        // Log de la réponse brute pour voir ce que vous recevez
+        const textResponse = await response.text(); // Récupère la réponse en texte
+        console.log('Raw response:', textResponse);
+        
+        // Vérifiez si la réponse a un statut correct
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        // Si la réponse est valide, tentez de la convertir en JSON
+        const data = JSON.parse(textResponse);  // Utilisation de JSON.parse() pour plus de contrôle
+        this.events = data;
+
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
     },
+
+    // Formatage de la date pour éviter "Invalid Date"
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      if (isNaN(date)) {
+        return "Date invalide"; // Si la date est invalide, renvoyer une chaîne appropriée
+      }
+      return date.toLocaleString('fr-FR', {
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit'
+      });
+    },
+
     goToHomePage() {
       this.$router.push('/');
     }
+  },
+  mounted() {
+    this.fetchEvents(); // Fetch events on mount
   }
-}
+};
 </script>
 
 <style scoped>
+/* Styles pour la page des événements */
 .header {
   background-color: #42b883;
   color: white;
@@ -105,35 +132,23 @@ export default {
   background-color: #36a76e;
 }
 
-.events-buttons {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.events-container {
+  text-align: center;
+  margin: 40px;
 }
 
-.events-buttons button {
-  background-color: #42b883;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+.events-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.events-list li {
+  padding: 10px;
   cursor: pointer;
-  margin: 5px;
-  font-size: 16px;
-  transition: background-color 0.3s;
 }
 
-.events-buttons button:hover {
-  background-color: #36a76e;
-}
-
-.event-details {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.events-list li:hover {
+  background-color: #f0f0f0;
 }
 
 .home-button {

@@ -4,12 +4,12 @@ USE JO;
 -- Drop existing tables if they exist
 DROP TABLE IF EXISTS Participate;
 DROP TABLE IF EXISTS Athletes;
-DROP TABLE IF EXISTS Country;
+DROP TABLE IF EXISTS Countries;
 DROP TABLE IF EXISTS Events;
-DROP TABLE IF EXISTS Sport;
+DROP TABLE IF EXISTS sports;
 
 -- Table Sport
-CREATE TABLE Sport (
+CREATE TABLE sports (
     ID_sport INT PRIMARY KEY AUTO_INCREMENT,
     Sport_name VARCHAR(50) NOT NULL,
     Minimum_weight DECIMAL(15,2),
@@ -26,11 +26,11 @@ CREATE TABLE Events (
     Event_date DATE,
     Number_of_place INT,
     ID_sport INT,
-    FOREIGN KEY (ID_sport) REFERENCES Sport(ID_sport)
+    FOREIGN KEY (ID_sport) REFERENCES Sports(ID_sport)
 );
 
--- Table Country
-CREATE TABLE Country (
+-- Table Countries
+CREATE TABLE Countries (
     ID_country INT PRIMARY KEY AUTO_INCREMENT,
     Country_name VARCHAR(50)
 );
@@ -44,7 +44,7 @@ CREATE TABLE Athletes (
     Adress VARCHAR(100),
     Phone_number VARCHAR(50),
     ID_country INT,
-    FOREIGN KEY (ID_country) REFERENCES Country(ID_country)
+    FOREIGN KEY (ID_country) REFERENCES Countries(ID_country)
 );
 
 -- Table Participate (Added event result)
@@ -58,7 +58,7 @@ CREATE TABLE Participate (
 );
 
 -- Insertion into Sport table
-INSERT INTO Sport (Sport_name, Minimum_weight, Maximum_weight, Team_sport, Number_of_player)
+INSERT INTO sports (Sport_name, Minimum_weight, Maximum_weight, Team_sport, Number_of_player)
 VALUES 
 ('100 meters', NULL, NULL, FALSE, 1),
 ('200 meters', NULL, NULL, FALSE, 1),
@@ -75,8 +75,8 @@ VALUES
 ('Basketball Final', 'Staples Center', '2024-07-28', 20000, 4),
 ('Swimming 200m', 'Aquatics Centre', '2024-07-25', 15000, 5);
 
--- Insertion into Country table
-INSERT INTO Country (Country_name)
+-- Insertion into Countries table
+INSERT INTO Countries (Country_name)
 VALUES 
 ('USA'),
 ('China'),
@@ -96,8 +96,8 @@ VALUES
 -- Insertion into Participate table with athlete results
 INSERT INTO Participate (ID_Athlete, ID_events, Result)
 VALUES 
-(1, 5, '1nd place'),
-(2, 5, '2st place'),
+(1, 5, '1st place'),
+(2, 5, '2nd place'),
 (3, 5, '3st place'),
 (4, 4, '1st place'),
 (5, 4, '4st place');
@@ -109,10 +109,10 @@ SELECT * FROM Athletes;
 SELECT * FROM Events;
 
 -- Select all countries
-SELECT * FROM Country;
+SELECT * FROM Countries;
 
 -- Select all participations with results
 SELECT * FROM Participate;
 
 -- Select all sports
-SELECT * FROM sport;
+SELECT * FROM sports;

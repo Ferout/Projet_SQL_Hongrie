@@ -4,14 +4,14 @@
       <div class="header-content">
         <span>{{ currentDate }}</span>
         <div class="nav-buttons">
+          <router-link to="/athletes">
+            <button>Athletes</button>
+          </router-link>
           <router-link to="/countries">
             <button>Countries</button>
           </router-link>
           <router-link to="/events">
             <button>Events</button>
-          </router-link>
-          <router-link to="/athletes">
-            <button>Athletes</button>
           </router-link>
           <router-link to="/participate">
             <button>Participate</button>
@@ -19,50 +19,54 @@
         </div>
       </div>
     </header>
-    <h2>Olympic Sports</h2>
-    <div class="sports-buttons">
-      <button v-for="sport in sports" :key="sport.id" @click="showSportDetails(sport)">
-        {{ sport.name }}
-      </button>
+
+    <h2>Sports</h2>
+    <div class="sports-list">
+      <ul>
+        <li v-for="sport in sports" :key="sport.ID_sport">
+          <strong>{{ sport.Sport_name }}</strong><br>
+          <span>Team Sport: {{ sport.Team_sport ? 'Yes' : 'No' }}</span><br>
+          <span>Number of Players: {{ sport.Number_of_player }}</span><br>
+          <span v-if="sport.Minimum_weight">Min Weight: {{ sport.Minimum_weight }} kg</span><br>
+          <span v-if="sport.Maximum_weight">Max Weight: {{ sport.Maximum_weight }} kg</span><br>
+        </li>
+      </ul>
     </div>
-    <div v-if="selectedSport" class="sport-details">
-      <h3>{{ selectedSport.name }}</h3>
-      <p><strong>Minimum Weight:</strong> {{ selectedSport.minWeight }} kg</p>
-      <p><strong>Maximum Weight:</strong> {{ selectedSport.maxWeight }} kg</p>
-      <p><strong>Team Sport:</strong> {{ selectedSport.teamSport ? 'Yes' : 'No' }}</p>
-      <p><strong>Number of Players:</strong> {{ selectedSport.numPlayers }}</p>
-    </div>
+
     <button @click="goToHomePage" class="home-button">Back to Home</button>
   </div>
 </template>
-
+ 
 <script>
 export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      selectedSport: null,
-      sports: [
-        { id: 1, name: '100 meters', minWeight: 'N/A', maxWeight: 'N/A', teamSport: false, numPlayers: 1 },
-        { id: 2, name: '200 meters', minWeight: 'N/A', maxWeight: 'N/A', teamSport: false, numPlayers: 1 },
-        { id: 3, name: 'Football', minWeight: 70, maxWeight: 100, teamSport: true, numPlayers: 11 },
-        { id: 4, name: 'Basketball', minWeight: 60, maxWeight: 120, teamSport: true, numPlayers: 5 },
-        { id: 5, name: 'Swimming', minWeight: 'N/A', maxWeight: 'N/A', teamSport: false, numPlayers: 1 },
-      ]
+      sports: [] // Données chargées depuis le backend
     };
   },
   methods: {
-    showSportDetails(sport) {
-      this.selectedSport = sport;
+    async fetchSports() {
+      try {
+        const response = await fetch('http://localhost:3000/api/sports'); // L'API qui renvoie les données des sports
+        const data = await response.json();
+        this.sports = data; // Assignation des données à la variable sports
+      } catch (error) {
+        console.error("Error fetching sports:", error);
+      }
     },
     goToHomePage() {
-      this.$router.push('/');
+      this.$router.push('/'); // Retour à la page d'accueil
     }
+  },
+  mounted() {
+    this.fetchSports(); // Chargement des données dès que le composant est monté
   }
-}
+};
 </script>
 
 <style scoped>
+/* Styles for the sports page */
 .header {
   background-color: #42b883;
   color: white;
@@ -111,35 +115,18 @@ export default {
   margin: 40px;
 }
 
-.sports-buttons {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.sports-list ul {
+  list-style-type: none;
+  padding: 0;
 }
 
-.sports-buttons button {
-  background-color: #42b883;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+.sports-list li {
+  padding: 10px;
   cursor: pointer;
-  margin: 5px;
-  font-size: 16px;
-  transition: background-color 0.3s;
 }
 
-.sports-buttons button:hover {
-  background-color: #36a76e;
-}
-
-.sport-details {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.sports-list li:hover {
+  background-color: #f0f0f0;
 }
 
 .home-button {

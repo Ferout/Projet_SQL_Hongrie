@@ -13,21 +13,18 @@ module.exports = {
 
     async getAllEvents() {
         try {
-            // Utilisation du bon nom de colonne (ex: ID_events)
             const sql = "SELECT ID_events, event_name, event_date, Event_place, Number_of_place FROM Events";
             const [rows] = await pool.promise().query(sql);
     
-            // Formater les dates ici
             rows.forEach(event => {
-                const date = new Date(event.Event_date);
-                event.Event_date = date.toLocaleString('fr-FR', { 
+                const date = new Date(event.event_date);
+                event.event_date = date.toLocaleString('fr-FR', { 
                     year: 'numeric', 
                     month: '2-digit', 
                     day: '2-digit'
                 });
             });
 
-            // Retourner les événements avec toutes les informations
             return rows;
         } catch (err) {
             console.error("Error fetching events:", err);
@@ -35,29 +32,84 @@ module.exports = {
         }
     },
 
-    async getEventById(eventId) {
+    async getEventById(ID_events) {
         try {
-            // Utilisation du bon nom de colonne (ex: ID_events)
-            const sql = "SELECT ID_events, event_name, event_date, location, seats FROM events WHERE ID_events = ?";
-            const result = await pool.execute(sql, [eventId]);
-
-            // Vérification de la structure du résultat
-            if (!result || !Array.isArray(result) || result.length < 2) {
-                console.error("Unexpected result format for single event:", result);
-                return false; // Retourner `false` si la structure est inattendue
-            }
-
-            const [rows, fields] = result;
-            console.log("SINGLE EVENT FETCHED: " + rows.length);
-
+            const sql = "SELECT ID_events, event_name, event_date, Event_place, Number_of_place FROM Events WHERE ID_events = ?";
+            const [rows] = await pool.promise().query(sql, [ID_events]);
+    
             if (rows.length === 1) {
-                return rows[0]; // Retourne l'événement trouvé
+                return rows[0];
             } else {
-                return false; // Retourner `false` si aucun résultat ou plusieurs résultats
+                return false;
             }
         } catch (err) {
             console.error("Error fetching event by ID:", err);
-            throw err; // Relancer l'erreur pour un traitement en amont
+            throw err;
+        }
+    },
+    
+    // Ajouter un nouvel événement
+    async addEvent(eventData) {
+        try {
+            const sql = `
+                INSERT INTO Events (event_name, event_date, Event_place, Number_of_place)
+                VALUES (?, ?, ?, ?)
+            `;
+            const { event_name, event_date, Event_place, Number_of_place } = eventData;
+            const [result] = await pool.promise().query(sql, [
+                event_name,
+                event_date,
+                Event_place,
+                Number_of_place
+            ]);
+            return result.insertId; // Retourne l'ID du nouvel événement
+        } catch (err) {
+            console.error("Error adding event:", err);
+            throw err;
+        }
+    },
+
+    async deleteEvent(ID_events) {
+        console.log("Deleting event with ID:", ID_events); // Ajouter un log pour vérifier l'ID
+        if (ID_events === undefined) {
+            console.error("Event ID is undefined!");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`http://localhost:3000/api/events/${ID_events}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                this.fetchEvents(); // Rafraîchir la liste des événements après suppression
+            } else {
+                console.error("Erreur lors de la suppression de l'événement", response);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression de l'événement:", error);
+        }
+    },
+    
+    
+    async updateEvent(ID_events, eventData) {
+        try {
+            const sql = `
+                UPDATE Events
+                SET event_name = ?, event_date = ?, Event_place = ?, Number_of_place = ?
+                WHERE ID_events = ?
+            `;
+            const { event_name, event_date, Event_place, Number_of_place } = eventData;
+            const [result] = await pool.promise().query(sql, [
+                event_name,
+                event_date,
+                Event_place,
+                Number_of_place,
+                ID_events
+            ]);
+            return result.affectedRows; // Retourne le nombre de lignes modifiées
+        } catch (err) {
+            console.error("Error updating event:", err);
+            throw err;
         }
     }
 };

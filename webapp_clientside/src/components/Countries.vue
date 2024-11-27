@@ -25,8 +25,10 @@
       <ul>
         <li v-for="country in countries" :key="country.ID_country">
           {{ country.Country_name }}
+          <div class="actions">
           <button @click="editCountry(country)">Edit</button>
           <button @click="deleteCountry(country.ID_country)">Delete</button>
+          </div>
         </li>
       </ul>
     </div>
@@ -153,6 +155,51 @@ export default {
 
 <style scoped>
 /* Add your styling here */
+
+.header {
+  background-color: #42b883;
+  color: white;
+  padding: 5px 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+  align-items: center;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-buttons button {
+  background-color: #42b883;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.nav-buttons button:hover {
+  background-color: #36a76e;
+}
+
+
 .countries-container {
   text-align: center;
   margin: 40px;
@@ -184,7 +231,7 @@ export default {
   margin-top: 20px;
 }
 
-.add-country-button:hover,
+
 .home-button:hover {
   background-color: #36a76e;
 }
@@ -208,4 +255,32 @@ export default {
   font-size: 14px;
   margin-top: 5px;
 }
+
+form button {
+  padding: 10px 20px;
+  background-color: #42b883;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #36a76e;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.actions button {
+  margin-right: 10px;
+  background-color: #42b883;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>

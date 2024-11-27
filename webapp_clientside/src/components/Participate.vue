@@ -1,7 +1,23 @@
 <template>
   <div class="participate-container">
     <header class="header">
-      <!-- Header as before -->
+      <div class="header-content">
+        <span>{{ currentDate }}</span>
+        <div class="nav-buttons">
+          <router-link to="/countries">
+            <button>Countries</button>
+          </router-link>
+          <router-link to="/sports">
+            <button>Sports</button>
+          </router-link>
+          <router-link to="/events">
+            <button>Events</button>
+          </router-link>
+          <router-link to="/Athletes">
+            <button>Athletes</button>
+          </router-link>
+        </div>
+      </div>
     </header>
 
     <h2>Participation</h2>

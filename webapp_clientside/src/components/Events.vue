@@ -225,24 +225,40 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+  align-items: center;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
 .nav-buttons button {
   background-color: #42b883;
   color: white;
+  padding: 8px 16px;
   border: none;
-  padding: 10px;
-  margin-left: 5px;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
+.nav-buttons button:hover {
+  background-color: #36a76e;
+}
 .events-list {
   padding: 50px 10px 20px;
 }
@@ -271,11 +287,41 @@ form button {
 }
 
 .home-button {
-  margin-top: 20px;
   background-color: #42b883;
   color: white;
+  padding: 10px 20px;
   border: none;
-  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.home-button:hover {
+  background-color: #36a76e;
+}
+
+.actions {
+  display: flex;
+  justify-content: center; 
+  gap: 10px;
+  margin-top: 10px; 
+}
+
+.actions button {
+  margin-right: 10px;
+  background-color: #42b883;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
+
+.actions button:hover {
+  background-color: #36a76e;
+}
+
+
 </style>

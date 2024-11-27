@@ -1,23 +1,7 @@
 <template>
   <div class="participate-container">
     <header class="header">
-      <div class="header-content">
-        <span>{{ currentDate }}</span>
-        <div class="nav-buttons">
-          <router-link to="/athletes">
-            <button>Athletes</button>
-          </router-link>
-          <router-link to="/countries">
-            <button>Countries</button>
-          </router-link>
-          <router-link to="/sports">
-            <button>Sports</button>
-          </router-link>
-          <router-link to="/events">
-            <button>Events</button>
-          </router-link>
-        </div>
-      </div>
+      <!-- Header as before -->
     </header>
 
     <h2>Participation</h2>
@@ -25,8 +9,20 @@
       <ul>
         <li v-for="participation in participations" :key="participation.id">
           {{ participation.First_name }} {{ participation.Family_name }} - {{ participation.Event_name }} - {{ participation.Result }}
+          <button @click="deleteParticipation(participation.id)">Delete</button>
+          <button @click="editParticipation(participation)">Edit</button>
         </li>
       </ul>
+    </div>
+
+    <div>
+      <h3>Add / Edit Participation</h3>
+      <form @submit.prevent="handleSubmit">
+        <input v-model="form.athlete_id" placeholder="Athlete ID" required />
+        <input v-model="form.event_id" placeholder="Event ID" required />
+        <input v-model="form.result" placeholder="Result" required />
+        <button type="submit">{{ editing ? "Update" : "Add" }} Participation</button>
+      </form>
     </div>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
@@ -38,27 +34,81 @@ export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      participations: [] // Data will be loaded from the backend
+      participations: [],
+      form: { athlete_id: "", event_id: "", result: "" },
+      editing: false,
+      editId: null,
     };
   },
   methods: {
     async fetchParticipations() {
       try {
         const response = await fetch('http://localhost:3000/api/participations');
-        const data = await response.json();
-        this.participations = data;
+        this.participations = await response.json();
       } catch (error) {
         console.error("Error fetching participations:", error);
       }
     },
+    async handleSubmit() {
+      if (this.editing) {
+        // Update Participation
+        await this.updateParticipation(this.editId, this.form);
+      } else {
+        // Add Participation
+        await this.addParticipation(this.form);
+      }
+      this.resetForm();
+      this.fetchParticipations();
+    },
+    async addParticipation(participation) {
+      try {
+        await fetch('http://localhost:3000/api/participations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(participation),
+        });
+      } catch (error) {
+        console.error("Error adding participation:", error);
+      }
+    },
+    async updateParticipation(id, participation) {
+      try {
+        await fetch(`http://localhost:3000/api/participations/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(participation),
+        });
+      } catch (error) {
+        console.error("Error updating participation:", error);
+      }
+    },
+    async deleteParticipation(id) {
+      try {
+        await fetch(`http://localhost:3000/api/participations/${id}`, { method: 'DELETE' });
+        this.fetchParticipations();
+      } catch (error) {
+        console.error("Error deleting participation:", error);
+      }
+    },
+    editParticipation(participation) {
+      this.form = { ...participation };
+      this.editId = participation.id;
+      this.editing = true;
+    },
+    resetForm() {
+      this.form = { athlete_id: "", event_id: "", result: "" };
+      this.editing = false;
+      this.editId = null;
+    },
     goToHomePage() {
       this.$router.push('/');
-    }
+    },
   },
   mounted() {
-    this.fetchParticipations(); // Fetch participations on mount
-  }
+    this.fetchParticipations();
+  },
 };
+
 </script>
 
 <style scoped>

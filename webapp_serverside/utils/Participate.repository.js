@@ -4,7 +4,6 @@ const pool = require(__dirname + "\\db.include.js");
 module.exports = {
     getBlankParticipation() {
         return {
-            "participation_id": 0,
             "athlete_id": 0,
             "event_id": 0,
             "score": 0,
@@ -15,47 +14,84 @@ module.exports = {
         };
     },
 
-    // Mise à jour de la requête pour la table "Participate" avec les nouveaux champs
     async getAllParticipations() {
         try {
-            // Effectuer une jointure entre Participate, Athletes et Events pour récupérer le prénom, le nom de l'athlète, l'événement et le résultat
-// Correction dans la requête pour retourner les clés attendues
-        let sql = `
-            SELECT 
-                Athletes.First_name AS 'First_name', 
-                Athletes.Family_name AS 'Family_name', 
-                Events.Event_name AS 'Event_name', 
-                Participate.Result AS 'Result'
-            FROM Participate
-            JOIN Athletes ON Participate.ID_Athlete = Athletes.ID_Athlete
-            JOIN Events ON Participate.ID_events = Events.ID_events`;
-        // Jointure avec Events pour récupérer le nom de l'événement
-            
-            const [rows] = await pool.promise().query(sql);  // Exécution de la requête et récupération des résultats
-            return rows;  // Retourne les résultats à l'appelant
+            let sql = `
+                SELECT 
+                    Athletes.First_name AS 'First_name', 
+                    Athletes.Family_name AS 'Family_name', 
+                    Events.Event_name AS 'Event_name', 
+                    Participate.Result AS 'Result'
+                FROM Participate
+                JOIN Athletes ON Participate.ID_Athlete = Athletes.ID_Athlete
+                JOIN Events ON Participate.ID_events = Events.ID_events`;
+            const [rows] = await pool.promise().query(sql);
+            return rows;
         } catch (err) {
-            console.error("Error fetching participations:", err);  // Affiche l'erreur si elle se produit
-            throw err;  // Lève l'erreur pour une gestion ultérieure
+            console.error("Error fetching participations:", err);
+            throw err;
         }
     },
-    
-    
-    
-    
-    // Mise à jour de la requête pour la table "Participate" avec les nouveaux champs
+
     async getParticipationById(participationId) {
         try {
-            let sql = "SELECT First_name, Family_name, Event_name, Result FROM Participate WHERE participation_id = ?";  // Sélectionner les nouveaux champs
-            const [rows, fields] = await pool.execute(sql, [participationId]);
+            let sql = "SELECT First_name, Family_name, Event_name, Result FROM Participate WHERE ID_Athlete = ? AND ID_events = ?";
+            const [rows] = await pool.execute(sql, [participationId.athlete_id, participationId.event_id]);
             console.log("SINGLE PARTICIPATION FETCHED: " + rows.length);
             if (rows.length == 1) {
-                return rows[0];  // Retourne les détails d'une participation spécifique
+                return rows[0];
             } else {
-                return false;  // Retourne false si aucune participation n'est trouvée
+                return false;
             }
         } catch (err) {
             console.log(err);
-            throw err;  // En cas d'erreur, la propager
+            throw err;
+        }
+    },
+
+    async addParticipation(participation) {
+        try {
+            const sql = `
+                INSERT INTO Participate (ID_Athlete, ID_events, Result)
+                VALUES (?, ?, ?)
+            `;
+            const { athlete_id, event_id, result: participationResult } = participation;
+            const [queryResult] = await pool.promise().query(sql, [athlete_id, event_id, participationResult]);
+            return { id: queryResult.insertId, ...participation };
+        } catch (err) {
+            console.error("Error adding participation:", err);
+            throw err;
+        }
+    },
+
+    async updateParticipation(participationId, updatedParticipation) {
+        try {
+            const sql = `
+                UPDATE Participate
+                SET ID_Athlete = ?, ID_events = ?, Result = ?
+                WHERE ID_Athlete = ? AND ID_events = ?
+            `;
+            const { athlete_id, event_id, result } = updatedParticipation;
+            await pool.promise().query(sql, [athlete_id, event_id, result, participationId.athlete_id, participationId.event_id]);
+            return { id: participationId, ...updatedParticipation };
+        } catch (err) {
+            console.error("Error updating participation:", err);
+            throw err;
+        }
+    },
+
+    // Correction de la suppression
+    async deleteParticipation(participationId) {
+        try {
+            const sql = `
+                DELETE FROM Participate
+                WHERE ID_Athlete = ? AND ID_events = ?
+            `;
+            await pool.promise().query(sql, [participationId.athlete_id, participationId.event_id]);
+            return { success: true };
+        } catch (err) {
+            console.error("Error deleting participation:", err);
+            throw err;
         }
     }
 };

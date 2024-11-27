@@ -98,14 +98,14 @@ async function eventListAction(request, response) {
 }
 
 async function eventShowAction(request, response) {
-    var event = await eventRepo.getEventById(request.params.eventId);
+    var event = await eventRepo.getEventById(request.params.ID_events);
     response.send(JSON.stringify(event));
 }
 
 async function eventCreateAction(request, response) {
     try {
         const newEvent = await eventRepo.addEvent(request.body);
-        response.send({ message: "Event created successfully", eventId: newEvent });
+        response.send({ message: "Event created successfully", ID_events: newEvent });
     } catch (err) {
         console.error("Error creating event:", err);
         response.status(500).send({ error: "Error creating event" });
@@ -114,7 +114,7 @@ async function eventCreateAction(request, response) {
 
 async function eventUpdateAction(request, response) {
     try {
-        const updatedRows = await eventRepo.updateEvent(request.params.eventId, request.body);
+        const updatedRows = await eventRepo.updateEvent(request.params.ID_events, request.body);
         response.send({ message: "Event updated successfully", rowsUpdated: updatedRows });
     } catch (err) {
         console.error("Error updating event:", err);
@@ -122,15 +122,17 @@ async function eventUpdateAction(request, response) {
     }
 }
 
+
 async function eventDeleteAction(request, response) {
     try {
-        const deletedRows = await eventRepo.deleteEvent(request.params.eventId);
+        const deletedRows = await eventRepo.deleteEvent(request.params.ID_events);
         response.send({ message: "Event deleted successfully", rowsDeleted: deletedRows });
     } catch (err) {
         console.error("Error deleting event:", err);
         response.status(500).send({ error: "Error deleting event" });
     }
 }
+
 
 // Actions pour les participations
 async function participateListAction(request, response) {

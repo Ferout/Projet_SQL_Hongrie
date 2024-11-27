@@ -79,15 +79,20 @@ module.exports = {
       throw err;
     }
   },
-
   async deleteEvent(ID_events) {
     try {
-      const sql = "DELETE FROM Events WHERE ID_events = ?";
-      const [result] = await pool.promise().query(sql, [ID_events]);
-      return result.affectedRows;
+        // Supprimer d'abord les participations associées à l'événement
+        let sqlDeleteParticipation = "DELETE FROM participate WHERE ID_events = ?";
+        await pool.promise().execute(sqlDeleteParticipation, [ID_events]);
+
+        // Ensuite, supprimer l'événement de la table 'Events'
+        const sql = "DELETE FROM Events WHERE ID_events = ?";
+        const [result] = await pool.promise().query(sql, [ID_events]);
+
+        return result.affectedRows; // Retourne le nombre de lignes supprimées
     } catch (err) {
-      console.error("Error deleting event:", err);
-      throw err;
+        console.error("Error deleting event:", err);
+        throw err;
     }
-  }
-};
+}
+}

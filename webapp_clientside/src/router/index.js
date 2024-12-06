@@ -5,7 +5,8 @@ import Countries from '@/components/Countries';
 import Events from '@/components/Events';
 import Sports from '@/components/Sports';
 import Participate from '@/components/Participate';
-import Home_page from '@/components/Home_page'; 
+import Home_page from '@/components/Home_page';
+import AuthModule from '@/components/AuthModule';
 
 Vue.use(Router);
 
@@ -17,5 +18,6 @@ export default new Router({
     { path: '/events', name: 'Events', component: Events },
     { path: '/sports', name: 'Sports', component: Sports },
     { path: '/participate', name: 'Participate', component: Participate },
+    { path: '/auth', name: 'AuthenticationDemo', component: AuthModule},
   ],
 });

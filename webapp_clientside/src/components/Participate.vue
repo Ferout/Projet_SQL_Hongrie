@@ -4,17 +4,17 @@
       <div class="header-content">
         <span>{{ currentDate }}</span>
         <div class="nav-buttons">
-          <router-link to="/countries">
-            <button>Countries</button>
-          </router-link>
-          <router-link to="/sports">
-            <button>Sports</button>
+          <router-link to="/athletes">
+            <button>Athletes</button>
           </router-link>
           <router-link to="/events">
             <button>Events</button>
           </router-link>
-          <router-link to="/Athletes">
-            <button>Athletes</button>
+          <router-link to="/sports">
+            <button>Sports</button>
+          </router-link>
+          <router-link to="/countries">
+            <button>Countries</button>
           </router-link>
         </div>
       </div>
@@ -23,24 +23,26 @@
     <h2>Participation</h2>
     <div class="participation-list">
       <ul>
-        <li v-for="participation in participations" :key="participation.id">
+        <li v-for="participation in participations" :key="`${participation.athlete_id}-${participation.event_id}`">
           {{ participation.First_name }} {{ participation.Family_name }} - {{ participation.Event_name }} - {{ participation.Result }}
-          <button @click="deleteParticipation(participation.id)">Delete</button>
-          <button @click="editParticipation(participation)">Edit</button>
+          <div class="actions">
+          <button @click="deleteParticipation(participation)">Supprimer</button>
+          <button @click="editParticipation(participation)">Modifier</button>
+        </div>
         </li>
       </ul>
     </div>
 
-    <div>
-      <h3>Add / Edit Participation</h3>
+    <div class="actions">
+      <h3>{{ editing ? "Modifier" : "Ajouter" }} une participation</h3>
       <form @submit.prevent="handleSubmit">
         <input v-model="form.athlete_id" placeholder="Athlete ID" required />
         <input v-model="form.event_id" placeholder="Event ID" required />
         <input v-model="form.result" placeholder="Result" required />
-        <button type="submit">{{ editing ? "Update" : "Add" }} Participation</button>
+        <button type="submit">{{ editing ? "Mettre à jour" : "Ajouter" }}</button>
+        <button  v-if="editing" @click="resetForm">Annuler</button>
       </form>
     </div>
-
     <button @click="goToHomePage" class="home-button">Back to Home</button>
   </div>
 </template>
@@ -49,7 +51,7 @@
 export default {
   data() {
     return {
-      currentDate: new Date().toLocaleDateString(),
+      currentDate: new Date().toLocaleDateString(), // Définition de `currentDate`
       participations: [],
       form: { athlete_id: "", event_id: "", result: "" },
       editing: false,
@@ -59,18 +61,16 @@ export default {
   methods: {
     async fetchParticipations() {
       try {
-        const response = await fetch('http://localhost:3000/api/participations');
+        const response = await fetch("http://localhost:3000/api/participations");
         this.participations = await response.json();
-      } catch (error) {
-        console.error("Error fetching participations:", error);
+      } catch (err) {
+        console.error("Error fetching participations:", err);
       }
     },
     async handleSubmit() {
       if (this.editing) {
-        // Update Participation
         await this.updateParticipation(this.editId, this.form);
       } else {
-        // Add Participation
         await this.addParticipation(this.form);
       }
       this.resetForm();
@@ -78,37 +78,39 @@ export default {
     },
     async addParticipation(participation) {
       try {
-        await fetch('http://localhost:3000/api/participations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("http://localhost:3000/api/participations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(participation),
         });
-      } catch (error) {
-        console.error("Error adding participation:", error);
+      } catch (err) {
+        console.error("Error adding participation:", err);
       }
     },
     async updateParticipation(id, participation) {
       try {
-        await fetch(`http://localhost:3000/api/participations/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch(`http://localhost:3000/api/participations/${id.athlete_id}/${id.event_id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(participation),
         });
-      } catch (error) {
-        console.error("Error updating participation:", error);
+      } catch (err) {
+        console.error("Error updating participation:", err);
       }
     },
-    async deleteParticipation(id) {
+    async deleteParticipation(participation) {
       try {
-        await fetch(`http://localhost:3000/api/participations/${id}`, { method: 'DELETE' });
+        await fetch(`http://localhost:3000/api/participations/${participation.athlete_id}/${participation.event_id}`, {
+          method: "DELETE",
+        });
         this.fetchParticipations();
-      } catch (error) {
-        console.error("Error deleting participation:", error);
+      } catch (err) {
+        console.error("Error deleting participation:", err);
       }
     },
     editParticipation(participation) {
       this.form = { ...participation };
-      this.editId = participation.id;
+      this.editId = { athlete_id: participation.athlete_id, event_id: participation.event_id };
       this.editing = true;
     },
     resetForm() {
@@ -117,14 +119,13 @@ export default {
       this.editId = null;
     },
     goToHomePage() {
-      this.$router.push('/');
+      this.$router.push("/"); // Méthode pour retourner à la page d'accueil
     },
   },
   mounted() {
     this.fetchParticipations();
   },
 };
-
 </script>
 
 <style scoped>
@@ -206,4 +207,15 @@ export default {
 .home-button:hover {
   background-color: #36a76e;
 }
+
+.actions button {
+  margin-right: 10px;
+  background-color: #42b883;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>

@@ -38,8 +38,10 @@
     <!-- Add Country Form -->
     <div v-if="showForm" class="form-container">
       <input v-model="newCountry" placeholder="Enter country name" />
+      <div class="actions">
       <button @click="addCountry">Add</button>
       <button @click="cancelAdd">Cancel</button>
+    </div>
     </div>
 
     <!-- Edit Country Form -->

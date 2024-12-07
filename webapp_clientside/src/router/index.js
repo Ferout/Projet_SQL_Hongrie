@@ -18,6 +18,10 @@ export default new Router({
     { path: '/events', name: 'Events', component: Events },
     { path: '/sports', name: 'Sports', component: Sports },
     { path: '/participate', name: 'Participate', component: Participate },
-    { path: '/auth', name: 'AuthenticationDemo', component: AuthModule},
+    { 
+      path: '/auth', 
+      name: 'AuthModule', 
+      component: AuthModule 
+    }
   ],
 });

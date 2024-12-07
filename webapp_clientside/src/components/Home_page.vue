@@ -2,6 +2,7 @@
     <div class="home-page">
       <!-- Header -->
       <header class="header">
+        <router-link to="/authmodule" class="auth-button">AuthModule</router-link>
         <span>{{ currentDate }}</span>
       </header>
   

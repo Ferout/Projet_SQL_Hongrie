@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS Athletes;
 DROP TABLE IF EXISTS Countries;
 DROP TABLE IF EXISTS Events;
 DROP TABLE IF EXISTS sports;
+DROP TABLE IF EXISTS User;
 
 -- Table Sport
 CREATE TABLE sports (
@@ -57,6 +58,12 @@ CREATE TABLE Participate (
     FOREIGN KEY (ID_events) REFERENCES Events(ID_events)
 );
 
+CREATE TABLE User(
+ID_user INT PRIMARY KEY,
+Password VARCHAR(50),
+Username VARCHAR(50)
+);
+
 -- Insertion into Sport table
 INSERT INTO sports (Sport_name, Minimum_weight, Maximum_weight, Team_sport, Number_of_player)
 VALUES 
@@ -102,6 +109,9 @@ VALUES
 (4, 4, '1st place'),
 (5, 4, '4st place');
 
+INSERT INTO User (ID_user, Password, Username) Values
+(1, 'Wifi', 'Messi');
+
 -- Select all data from Athletes table
 SELECT * FROM Athletes;
 
@@ -116,3 +126,6 @@ SELECT * FROM Participate;
 
 -- Select all sports
 SELECT * FROM sports;
+
+-- Select all users
+SELECT * FROM user;

@@ -15,33 +15,43 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "AuthModule",
   data() {
     return {
-      msg: "Welcome to Your Vue.js App",
+      msg: "",
       username: "",
       password: "",
     };
   },
   methods: {
     async handleLogin() {
-      try {
-        const response = await this.$http.post(
-          "http://localhost:8080/auth/login",
-          { username: this.username, userpass: this.password }
-        );
+  console.log("Login button clicked");
+  console.log("Username entered:", this.username);
+  console.log("Password entered:", this.password);
 
-        this.msg = response.data.message; // Affiche le message de succès
-        console.log("User:", response.data.user);
-      } catch (error) {
-        this.msg = error.response && error.response.data && error.response.data.message 
-        ? error.response.data.message 
-        : "Une erreur est survenue";
+  try {
+    console.log("Sending request to backend...");
+    const response = await axios.post(
+      "http://localhost:3000/auth/login",
+      { username: this.username, password: this.password },
+      { withCredentials: true }
+    );
+    console.log("Response received:", response); // Log si une réponse est reçue
 
-        console.error(error);
-      }
-    },
-  },
-};
+    if (response.status === 200) {
+      this.msg = "Connexion réussie : " + response.data.user.Username;
+      console.log("User authenticated:", response.data.user);
+    } else {
+      this.msg = "Connexion échouée";
+      console.warn("Unexpected response:", response);
+    }
+  } catch (error) {
+    console.error("Error during Axios request:", error); // Log si une erreur survient
+    this.msg = (error.response && error.response.data && error.response.data.message) || "Une erreur est survenue.";
+  }
+}
+  }}
 </script>

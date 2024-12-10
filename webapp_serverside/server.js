@@ -10,19 +10,14 @@ const auth = require('./utils/users.auth'); // Configuration Passport.js pour l'
 
 // Création de l'application Express
 const app = express();
-app.set('view engine', 'ejs');
-app.set('views', 'views');
 
 // Configuration du port du serveur à partir des variables d'environnement
 const port = process.env.WEB_PORT || 3000;
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Listening on ${port}`);
-});
 
 // *** MIDDLEWARES ***
 // Configuration de CORS pour permettre les requêtes cross-origin
 app.use(cors({
-    origin: 'http://localhost:8080', // Frontend Vue.js
+    origin: 'http://localhost:8080', // URL du frontend Vue.js
     credentials: true, // Support des cookies/sessions
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Méthodes autorisées
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -43,33 +38,23 @@ app.use(session({
 // Initialisation de Passport.js pour l'authentification
 auth.initializeAuthentications(app);
 
+// *** ROUTES ***
 // Routes pour les services d'authentification
 app.use('/auth', require('./controllers/auth.route'));
-
-// *** ROUTES PRINCIPALES ***
-// Route d'accueil
-app.get('/', (request, response) => {
-    let clientIp = request.ip;
-    response.send(`Hello, dear ${clientIp}. I am a nodejs website...`);
-    response.end(); // Optionnel
-});
 
 // Routes statiques
 app.use('/static', express.static(__dirname + '/static'));
 
-// Importation des autres routes
-app.use('/api', require('./controllers/api.route')); // API principale
-app.use('/auth', require('./controllers/auth.route')); // Exemple d'autres entités
+// API principale
+app.use('/api', require('./controllers/api.route'));
 
-// Exemple de requête fetch (si exécutée dans un environnement séparé)
-fetch('http://localhost:3000/api/countries', {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer your_token_here' // Si vous utilisez des tokens
-    },
-    credentials: 'include' // Pour inclure les cookies/sessions
-})
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
+// Route d'accueil
+app.get('/', (req, res) => {
+    const clientIp = req.ip;
+    res.send(`Hello, dear ${clientIp}. I am a Node.js website...`);
+});
+
+// *** DÉMARRER LE SERVEUR ***
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});

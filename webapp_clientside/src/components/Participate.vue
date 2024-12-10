@@ -25,24 +25,25 @@
       <ul>
         <li v-for="participation in participations" :key="`${participation.athlete_id}-${participation.event_id}`">
           {{ participation.First_name }} {{ participation.Family_name }} - {{ participation.Event_name }} - {{ participation.Result }}
-          <div class="actions">
-          <button @click="deleteParticipation(participation)">Supprimer</button>
-          <button @click="editParticipation(participation)">Modifier</button>
-        </div>
+          <div class="actions" v-if="isAdmin">
+            <button @click="deleteParticipation(participation)">Supprimer</button>
+            <button @click="editParticipation(participation)">Modifier</button>
+          </div>
         </li>
       </ul>
     </div>
 
-    <div class="actions">
+    <div class="actions" v-if="isAdmin">
       <h3>{{ editing ? "Modifier" : "Ajouter" }} une participation</h3>
       <form @submit.prevent="handleSubmit">
         <input v-model="form.athlete_id" placeholder="Athlete ID" required />
         <input v-model="form.event_id" placeholder="Event ID" required />
         <input v-model="form.result" placeholder="Result" required />
         <button type="submit">{{ editing ? "Mettre à jour" : "Ajouter" }}</button>
-        <button  v-if="editing" @click="resetForm">Annuler</button>
+        <button v-if="editing" @click="resetForm">Annuler</button>
       </form>
     </div>
+
     <button @click="goToHomePage" class="home-button">Back to Home</button>
   </div>
 </template>
@@ -51,11 +52,12 @@
 export default {
   data() {
     return {
-      currentDate: new Date().toLocaleDateString(), // Définition de `currentDate`
+      currentDate: new Date().toLocaleDateString(),
       participations: [],
       form: { athlete_id: "", event_id: "", result: "" },
       editing: false,
       editId: null,
+      isAdmin: false, // Défini par défaut comme non-admin
     };
   },
   methods: {
@@ -66,6 +68,19 @@ export default {
       } catch (err) {
         console.error("Error fetching participations:", err);
       }
+    },
+    loadAdminStatus() {
+      const username = localStorage.getItem("username");
+      const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+      if (!username) {
+        console.warn("Username not found in localStorage");
+        this.isAdmin = false;
+        return;
+      }
+
+      this.isAdmin = isAdmin === 1;
+      console.log("Admin status loaded:", this.isAdmin);
     },
     async handleSubmit() {
       if (this.editing) {
@@ -119,17 +134,18 @@ export default {
       this.editId = null;
     },
     goToHomePage() {
-      this.$router.push("/"); // Méthode pour retourner à la page d'accueil
+      this.$router.push("/");
     },
   },
   mounted() {
     this.fetchParticipations();
+    this.loadAdminStatus();
   },
 };
 </script>
 
 <style scoped>
-/* Styles for the participate page */
+/* Styles pour la page de participation */
 .header {
   background-color: #42b883;
   color: white;
@@ -192,6 +208,39 @@ export default {
   background-color: #f0f0f0;
 }
 
+.actions button {
+  margin-right: 10px;
+  background-color: #42b883;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #36a76e;
+}
+
+form input {
+  margin: 5px 0;
+  padding: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+
+form button {
+  background-color: #42b883;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #36a76e;
+}
+
 .home-button {
   background-color: #42b883;
   color: white;
@@ -207,15 +256,4 @@ export default {
 .home-button:hover {
   background-color: #36a76e;
 }
-
-.actions button {
-  margin-right: 10px;
-  background-color: #42b883;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 </style>

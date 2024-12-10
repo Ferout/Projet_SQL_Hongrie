@@ -33,7 +33,7 @@
               <p><strong>Address:</strong> {{ athlete.Adress }}</p>
               <p><strong>Phone:</strong> {{ athlete.Phone_number }}</p>
               <p><strong>Country:</strong> {{ athlete.Country_name }}</p>
-              <div class="actions">
+              <div class="actions" v-if="isAdmin">
                 <button @click="editAthlete(athlete)">Edit</button>
                 <button @click="deleteAthlete(athlete.ID_Athlete)">Delete</button>
               </div>
@@ -42,8 +42,8 @@
         </ul>
       </div>
 
-      <h3>Add New Athlete</h3>
-      <form @submit.prevent="addAthlete">
+      <h3 v-if="isAdmin">Add New Athlete</h3>
+      <form v-if="isAdmin" @submit.prevent="addAthlete">
         <input v-model="newAthlete.First_name" placeholder="First Name" required />
         <input v-model="newAthlete.Family_name" placeholder="Family Name" required />
         <input v-model="newAthlete.Age" type="number" placeholder="Age" required />
@@ -93,6 +93,7 @@ export default {
         ID_country: null,
       },
       editingAthlete: null,
+      isAdmin: false, // Défini par défaut comme non-admin
     };
   },
   methods: {
@@ -104,6 +105,19 @@ export default {
       } catch (error) {
         console.error("Error fetching athletes:", error);
       }
+    },
+    loadAdminStatus() {
+      const username = localStorage.getItem("username");
+      const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+      if (!username) {
+        console.warn("Username not found in localStorage");
+        this.isAdmin = false;
+        return;
+      }
+
+      this.isAdmin = isAdmin === 1;
+      console.log("Admin status loaded:", this.isAdmin);
     },
     async addAthlete() {
       try {
@@ -167,6 +181,7 @@ export default {
   },
   mounted() {
     this.fetchAthletes();
+    this.loadAdminStatus();
   },
 };
 </script>
@@ -273,5 +288,4 @@ form button:hover {
 .home-button:hover {
   background-color: #36a76e;
 }
-
 </style>

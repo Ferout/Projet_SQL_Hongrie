@@ -30,7 +30,7 @@
             <span>Number of Players: {{ sport.Number_of_player }}</span><br>
             <span v-if="sport.Minimum_weight">Min Weight: {{ sport.Minimum_weight }} kg</span><br>
             <span v-if="sport.Maximum_weight">Max Weight: {{ sport.Maximum_weight }} kg</span><br>
-            <div class="actions">
+            <div class="actions" v-if="isAdmin">
               <button @click="editSport(sport)">Edit</button>
               <button @click="deleteSport(sport.ID_sport)">Delete</button>
             </div>
@@ -39,8 +39,8 @@
       </ul>
     </div>
 
-    <h3>Add New Sport</h3>
-    <form @submit.prevent="addSport">
+    <h3 v-if="isAdmin">Add New Sport</h3>
+    <form v-if="isAdmin" @submit.prevent="addSport">
       <input v-model="newSport.Sport_name" placeholder="Sport Name" required />
       <input v-model="newSport.Number_of_player" type="number" placeholder="Number of Players" required />
       <input v-model="newSport.Minimum_weight" type="number" placeholder="Minimum Weight (kg)" />
@@ -78,7 +78,8 @@ export default {
         Maximum_weight: null,
         Team_sport: false,
       },
-      editingSport: null,  // Sport en cours d'édition
+      editingSport: null, // Sport en cours d'édition
+      isAdmin: false, // Défini par défaut comme non-admin
     };
   },
   methods: {
@@ -90,6 +91,19 @@ export default {
       } catch (error) {
         console.error("Error fetching sports:", error);
       }
+    },
+    loadAdminStatus() {
+      const username = localStorage.getItem("username");
+      const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+      if (!username) {
+        console.warn("Username not found in localStorage");
+        this.isAdmin = false;
+        return;
+      }
+
+      this.isAdmin = isAdmin === 1;
+      console.log("Admin status loaded:", this.isAdmin);
     },
     async addSport() {
       try {
@@ -151,13 +165,10 @@ export default {
   },
   mounted() {
     this.fetchSports(); // Chargement des sports dès que le composant est monté
+    this.loadAdminStatus(); // Chargement du statut admin
   },
 };
 </script>
-
-<style scoped>
-/* Styles comme dans ton code */
-</style>
 
 <style scoped>
 /* Styles pour la page des sports */

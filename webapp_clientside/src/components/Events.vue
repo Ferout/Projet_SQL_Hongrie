@@ -27,7 +27,7 @@
         <li v-for="event in events" :key="event.ID_events">
           {{ event.event_name }} - {{ formatDate(event.event_date) }} - 
           {{ event.Number_of_place }} places - {{ event.Event_place }}
-          <div class="actions">
+          <div class="actions" v-if="isAdmin">
             <button class="edit-btn" @click="openEditForm(event)">Edit</button>
             <button @click="deleteEvent(event.ID_events)">Delete</button>
           </div>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Formulaire d'ajout d'événement (toujours visible) -->
-    <form @submit.prevent="saveEvent">
+    <form v-if="isAdmin" @submit.prevent="saveEvent">
       <h3>Add Event</h3>
       <input v-model="addForm.event_name" placeholder="Event Name" required />
       <input v-model="addForm.event_date" type="date" required />
@@ -104,6 +104,20 @@ export default {
       const date = new Date(dateString);
       return isNaN(date) ? "" : date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
     },
+    
+    loadAdminStatus() {
+  const username = localStorage.getItem("username");
+  const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+  if (!username) {
+    console.warn("Username not found in localStorage");
+    this.isAdmin = false;
+    return;
+  }
+
+  this.isAdmin = isAdmin === 1;
+  console.log("Admin status loaded:", this.isAdmin);
+  },
 
     async saveEvent() {
       try {
@@ -210,9 +224,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchEvents();
-  },
+  this.fetchEvents();
+  this.loadAdminStatus();
+},
 };
+
 </script>
 
 <style scoped>

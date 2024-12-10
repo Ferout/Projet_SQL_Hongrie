@@ -37,7 +37,7 @@
       Add Country
     </button>
 
-    <!-- Add Country Form -->
+    <!-- Formulaire Ajouter un Pays -->
     <div v-if="showForm" class="form-container">
       <input v-model="newCountry" placeholder="Enter country name" />
       <div class="actions">
@@ -46,11 +46,13 @@
       </div>
     </div>
 
-    <!-- Edit Country Form -->
+    <!-- Formulaire Modifier un Pays -->
     <div v-if="editFormVisible" class="form-container">
       <input v-model="editedCountryName" placeholder="Edit country name" />
-      <button @click="updateCountry">Update</button>
-      <button @click="cancelEdit">Cancel</button>
+      <div class="actions">
+        <button @click="updateCountry">Update</button>
+        <button @click="cancelEdit">Cancel</button>
+      </div>
     </div>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
@@ -58,53 +60,56 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
       countries: [],
-      showForm: false, // To show/hide the add country form
-      newCountry: "", // Country name input value
-      editFormVisible: false, // To show/hide the edit country form
-      countryToEdit: null, // Country being edited
-      editedCountryName: "", // Edited country name value
-      isAdmin: false, // Admin status
+      showForm: false,
+      editFormVisible: false,
+      newCountry: "",
+      countryToEdit: null,
+      editedCountryName: "",
+      isAdmin: false, // Défaut non-admin
     };
   },
   methods: {
     async fetchCountries() {
       try {
-        const response = await fetch("http://localhost:3000/api/countries");
-        const data = await response.json();
-        this.countries = Array.isArray(data) ? data : [];
+        const response = await axios.get("http://localhost:3000/api/countries");
+        this.countries = response.data || [];
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
     },
-    async checkAdminStatus() {
-      try {
-        const response = await fetch("http://localhost:3000/auth/current-user", {
-          credentials: "include",
-        });
-        const user = await response.json();
-        this.isAdmin = user.isAdmin;
-      } catch (error) {
-        console.error("Error checking admin status:", error);
+    loadAdminStatus() {
+      const username = localStorage.getItem("username");
+      const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+      if (!username) {
+        console.warn("Username not found in localStorage");
+        this.isAdmin = false;
+        return;
+      }
+
+      if (isAdmin === 1) {
+        console.log("Admin status loaded from localStorage:", isAdmin);
+        this.isAdmin = true;
+      } else {
+        console.warn("User is not admin");
         this.isAdmin = false;
       }
     },
     async addCountry() {
       if (!this.newCountry) return;
 
-      const countryData = { Country_name: this.newCountry };
       try {
-        const response = await fetch("http://localhost:3000/api/countries", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(countryData),
+        const response = await axios.post("http://localhost:3000/api/countries", {
+          Country_name: this.newCountry,
         });
-        const newCountry = await response.json();
-        this.countries.push(newCountry);
+        this.countries.push(response.data);
         this.newCountry = "";
         this.showForm = false;
       } catch (error) {
@@ -113,16 +118,10 @@ export default {
     },
     async deleteCountry(countryId) {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/countries/${countryId}`,
-          { method: "DELETE" }
+        await axios.delete(`http://localhost:3000/api/countries/${countryId}`);
+        this.countries = this.countries.filter(
+          (country) => country.ID_country !== countryId
         );
-        const data = await response.json();
-        if (data.rowsDeleted > 0) {
-          this.countries = this.countries.filter(
-            (country) => country.ID_country !== countryId
-          );
-        }
       } catch (error) {
         console.error("Error deleting country:", error);
       }
@@ -137,20 +136,15 @@ export default {
 
       const updatedCountry = { Country_name: this.editedCountryName };
       try {
-        const response = await fetch(
+        const response = await axios.put(
           `http://localhost:3000/api/countries/${this.countryToEdit.ID_country}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedCountry),
-          }
+          updatedCountry
         );
-        const updatedData = await response.json();
         const index = this.countries.findIndex(
           (country) => country.ID_country === this.countryToEdit.ID_country
         );
         if (index !== -1) {
-          this.countries[index] = updatedData;
+          this.countries[index] = response.data;
         }
         this.editedCountryName = "";
         this.editFormVisible = false;
@@ -173,13 +167,15 @@ export default {
   },
   async mounted() {
     await this.fetchCountries();
-    await this.checkAdminStatus();
+    this.loadAdminStatus();
   },
 };
 </script>
 
+
+
 <style scoped>
-/* Add your styling here */
+
 
 .header {
   background-color: #42b883;
@@ -224,7 +220,6 @@ export default {
   background-color: #36a76e;
 }
 
-
 .countries-container {
   text-align: center;
   margin: 40px;
@@ -255,7 +250,6 @@ export default {
   font-size: 16px;
   margin-top: 20px;
 }
-
 
 .home-button:hover {
   background-color: #36a76e;
@@ -307,5 +301,4 @@ form button:hover {
   border-radius: 5px;
   cursor: pointer;
 }
-
 </style>

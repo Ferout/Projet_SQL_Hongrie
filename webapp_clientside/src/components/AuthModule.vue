@@ -11,6 +11,7 @@
 
       <button type="submit">Login</button>
     </form>
+    <button v-if="isAuthenticated" @click="handleLogout">Logout</button>
   </div>
 </template>
 
@@ -24,34 +25,67 @@ export default {
       msg: "",
       username: "",
       password: "",
+      isAuthenticated: false,
+      isAdmin: false,
     };
   },
   methods: {
     async handleLogin() {
-  console.log("Login button clicked");
-  console.log("Username entered:", this.username);
-  console.log("Password entered:", this.password);
+      console.log("Sending login request with:", {
+        username: this.username,
+        password: this.password,
+      });
 
-  try {
-    console.log("Sending request to backend...");
-    const response = await axios.post(
-      "http://localhost:3000/auth/login",
-      { username: this.username, password: this.password },
-      { withCredentials: true }
-    );
-    console.log("Response received:", response); // Log si une réponse est reçue
+      try {
+        const response = await axios.post("http://localhost:3000/auth/login", {
+          username: this.username,
+          password: this.password,
+        });
 
-    if (response.status === 200) {
-      this.msg = "Connexion réussie : " + response.data.user.Username;
-      console.log("User authenticated:", response.data.user);
+        console.log("Login response received:", response.data);
+
+        if (response.data.user) {
+          this.isAdmin = response.data.user.isAdmin; // Stocker directement le statut admin
+          this.isAuthenticated = true;
+          localStorage.setItem("username", response.data.user.username); // Stocker le nom d'utilisateur
+          localStorage.setItem("isAdmin", this.isAdmin); // Sauvegarder le statut admin
+          this.$router.push({ name: "Home_page" });
+        } else {
+          this.msg = "Login failed.";
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        this.msg = "An error occurred during login.";
+      }
+    },
+    handleLogout() {
+      console.log("Logout triggered");
+      localStorage.removeItem("username");
+      localStorage.removeItem("isAdmin");
+      this.isAuthenticated = false;
+      this.isAdmin = false;
+      this.$router.push({ name: "AuthModule" });
+    },
+  },
+  mounted() {
+    const username = localStorage.getItem("username");
+    const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+
+    if (username) {
+      console.log("Username loaded from localStorage:", username);
+      this.username = username;
+      this.isAuthenticated = true;
     } else {
-      this.msg = "Connexion échouée";
-      console.warn("Unexpected response:", response);
+      console.warn("Username not found in localStorage");
     }
-  } catch (error) {
-    console.error("Error during Axios request:", error); // Log si une erreur survient
-    this.msg = (error.response && error.response.data && error.response.data.message) || "Une erreur est survenue.";
-  }
-}
-  }}
+
+    if (isAdmin === 1) {
+      console.log("Admin status loaded from localStorage:", isAdmin);
+      this.isAdmin = true;
+    } else {
+      console.warn("Admin status not found or not admin");
+      this.isAdmin = false;
+    }
+  },
+};
 </script>

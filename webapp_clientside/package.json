@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+     "jwt-decode": "^3.x.x",
     "flag-icon-css": "^4.1.7",
     "vue": "^2.7.16",
     "vue-router": "^3.0.1"

@@ -220,6 +220,7 @@ export default {
 </script>
 
 <style scoped>
+
 .events-list {
   display: flex;
   flex-wrap: wrap;

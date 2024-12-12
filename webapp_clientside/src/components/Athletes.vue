@@ -241,32 +241,33 @@ export default {
 .athlete-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Espacement entre les cartes */
+  gap: 20px; 
   padding: 0;
-  list-style: none; /* Retire les puces */
+  list-style: none; 
 }
 
 .athlete-card {
-  flex: 1 1 calc(33.333% - 20px); /* Chaque carte occupe environ 1/3 de la largeur */
-  box-sizing: border-box; /* Inclut les bordures et le padding */
+  flex: 1 1 calc(33.333% - 20px); 
+  box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px; 
+  background-color: #f9f9f9;
+  text-align: center; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
-/* Responsivité */
-@media (max-width: 768px) {
-  .athlete-card {
-    flex: 1 1 calc(50% - 20px); /* Deux cartes par ligne sur tablettes */
-  }
+.athlete-card p {
+  margin: 5px 0;
+  font-size: 16px; 
 }
 
-@media (max-width: 480px) {
-  .athlete-card {
-    flex: 1 1 100%; /* Une carte par ligne sur mobiles */
-  }
-}
+
+
 
 .actions button {
   margin-right: 10px;

@@ -164,8 +164,7 @@ export default {
     },
     async deleteAthlete(athleteId) {
       try {
-        const response = await fetch(
-          `http://localhost:3000/athletes/${athleteId}`,
+        const response = await fetch(`http://localhost:3000/athletes/${athleteId}`,
           { method: "DELETE" }
         );
         if (response.ok) {

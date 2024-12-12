@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
     <header class="header">
-        <span>{{ currentDate }}</span>
-      </header>
+      <span>{{ currentDate }}</span>
+    </header>
     <h1>Authentication</h1>
     <p>{{ msg }}</p>
     <form @submit.prevent="handleLogin">
@@ -14,14 +14,14 @@
 
       <button type="submit" class="auth-button">Login</button>
     </form>
-    <button v-if="isAuthenticated" @click="handleLogout" class="auth-button">Logout</button>
-    <router-link to="/" class="auth-button">Back to Home</router-link>
-
-
-  <footer class="footer">
+    <div class="auth-buttons">
+      <button @click="handleLogout" class="auth-button">Logout</button>
+      <router-link to="/" class="auth-button">Back to Home</router-link>
+    </div>
+    <p v-if="logoutMessage" class="logout-message">{{ logoutMessage }}</p>
+    <footer class="footer">
       <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
-      </footer>
-
+    </footer>
   </div>
 </template>
 
@@ -38,6 +38,7 @@ export default {
       password: "",
       isAuthenticated: false,
       isAdmin: false,
+      logoutMessage: "",
     };
   },
   methods: {
@@ -66,7 +67,7 @@ export default {
         }
       } catch (error) {
         console.error("Login error:", error);
-        this.msg = "An error occurred during login.";
+        this.msg = "Login failed";
       }
     },
     handleLogout() {
@@ -76,6 +77,7 @@ export default {
       this.isAuthenticated = false;
       this.isAdmin = false;
       this.$router.push({ name: "AuthModule" });
+      this.msg = "Disconnected";
     },
   },
   mounted() {

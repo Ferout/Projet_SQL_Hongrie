@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const usersRepo = require("./users.repository.js");
 
-const SECRET_KEY = "SuperSecretRandomString"; // Remplacez par une clé robuste
+const SECRET_KEY = "SuperSecretRandomString"; 
 
 module.exports = {
   initializeAuthentications(app) {
@@ -32,7 +32,7 @@ module.exports = {
     return jwt.sign(
       { id: user.ID_user, username: user.Username, isAdmin: user.IsAdmin },
       SECRET_KEY,
-      { expiresIn: "1d" } // Expiration : 1 jour
+      { expiresIn: "1d" }
     );
   },
 

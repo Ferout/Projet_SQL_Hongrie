@@ -1,7 +1,6 @@
 const pool = require(__dirname + '\\db.include.js');
 
 module.exports = {
-  // Fonction pour obtenir tous les pays
   getAllCountries() {
     return new Promise((resolve, reject) => {
       pool.query('SELECT * FROM countries', (error, rows) => {
@@ -14,7 +13,6 @@ module.exports = {
     });
   },
 
-  // Fonction pour ajouter un pays
   addCountry(country) {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO countries (Country_name) VALUES (?)';
@@ -28,7 +26,6 @@ module.exports = {
     });
   },
 
-  // Fonction pour mettre à jour un pays
   updateCountry(ID_country, country) {
     return new Promise((resolve, reject) => {
       const sql = 'UPDATE countries SET Country_name = ? WHERE ID_country = ?';
@@ -42,10 +39,8 @@ module.exports = {
     });
   },
 
-  // Fonction pour supprimer un pays et ses athlètes
   async deleteCountry(ID_country) {
     return new Promise((resolve, reject) => {
-      // 1. Supprimer les athlètes associés à ce pays
       const deleteAthletesQuery = 'UPDATE athletes SET ID_country = NULL WHERE ID_country = ?';
       pool.query(deleteAthletesQuery, [ID_country], (error, result) => {
         if (error) {
@@ -53,7 +48,6 @@ module.exports = {
           return reject(error);
         }
 
-        // 2. Supprimer ensuite le pays
         const deleteCountryQuery = 'DELETE FROM countries WHERE ID_country = ?';
         pool.query(deleteCountryQuery, [ID_country], (error, result) => {
           if (error) {

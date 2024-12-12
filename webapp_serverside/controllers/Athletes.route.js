@@ -3,11 +3,11 @@ const router = express.Router();
 const athleteRepo = require('../utils/Athletes.repository');
 
 
-router.get('/', athleteListAction); // Correspond à /athletes
-router.get('/:athleteId', athleteShowAction); // Correspond à /athletes/:athleteId
-router.post('/', athleteCreateAction); // Correspond à /athletes
-router.put('/:athleteId', athleteUpdateAction); // Correspond à /athletes/:athleteId
-router.delete('/:athleteId', athleteDelAction); // Correspond à /athletes/:athleteId
+router.get('/', athleteListAction); 
+router.get('/:athleteId', athleteShowAction); 
+router.post('/', athleteCreateAction); 
+router.put('/:athleteId', athleteUpdateAction); 
+router.delete('/:athleteId', athleteDelAction);
 
 
 

@@ -1,7 +1,6 @@
 const pool = require(__dirname + "\\db.include.js");
 
 module.exports = {
-  // Récupérer tous les athlètes avec les informations liées au pays
   async getAllAthletes() {
     try {
       let sql = "SELECT a.ID_Athlete, a.First_name, a.Family_name, a.Age, a.Adress, a.Phone_number, c.Country_name " +
@@ -16,7 +15,7 @@ module.exports = {
     }
   },
 
-  // Ajouter un athlète
+
   async addAthlete(athlete) {
     if (!athlete || !athlete.First_name || !athlete.Family_name || !athlete.Age || !athlete.Adress || !athlete.Phone_number || !athlete.ID_country) {
       throw new Error("Missing required fields.");
@@ -38,17 +37,14 @@ module.exports = {
 
 async updateAthlete(athleteId, athleteData) {
     try {
-        // Vérifiez et extrayez les champs de athleteData
         const { First_name, Family_name, Age, Adress, Phone_number, ID_country } = athleteData;
 
-        // Requête SQL pour mettre à jour un athlète dans la base de données
         const query = `
             UPDATE Athletes
             SET First_name = ?, Family_name = ?, Age = ?, Adress = ?, Phone_number = ?, ID_country = ?
             WHERE ID_Athlete = ?
         `;
 
-        // Exécution de la requête
         const [result] = await pool.promise().execute(query, [
             First_name, 
             Family_name, 
@@ -66,7 +62,7 @@ async updateAthlete(athleteId, athleteData) {
         }
     } catch (error) {
         console.error("Erreur lors de la mise à jour de l'athlète:", error);
-        throw error; // Propagation de l'erreur pour la gestion dans le contrôleur
+        throw error; 
     }
 },
 
@@ -75,11 +71,9 @@ async updateAthlete(athleteId, athleteData) {
   
 async delAthlete(athleteId) {
   try {
-    // Supprimer d'abord les participations dans la table 'participate' (si elles existent)
     let sqlDeleteParticipation = "DELETE FROM participate WHERE ID_Athlete = ?";
     await pool.promise().execute(sqlDeleteParticipation, [athleteId]);
-
-    // Ensuite, supprimer l'athlète de la table 'Athletes'
+    
     let sqlDeleteAthlete = "DELETE FROM Athletes WHERE ID_Athlete = ?";
     const [okPacket] = await pool.promise().execute(sqlDeleteAthlete, [athleteId]);
 

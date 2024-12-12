@@ -205,29 +205,29 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center; /* Alignement horizontal des cartes */
+  justify-content: center; 
   padding: 0;
   list-style: none;
 }
 
 .participation-card {
-  display: flex; /* Utilisation de flexbox */
-  flex-direction: column; /* Aligner les éléments en colonne */
-  justify-content: center; /* Centrer verticalement */
-  align-items: center; /* Centrer horizontalement */
-  flex: 1 1 calc(33.333% - 20px); /* Taille flexible : 3 cartes par ligne */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+  flex: 1 1 calc(33.333% - 20px); 
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
-  text-align: center; /* Centrer le texte */
+  text-align: center; 
 }
 
 .participation-card p {
   margin: 5px 0;
-  font-size: 16px; /* Taille de police pour une meilleure lisibilité */
+  font-size: 16px;
 }
 
 .actions {

@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const userRepo = require("../utils/users.repository");
 
-// Connexion
+
 router.post("/login", async (req, res) => {
-  console.log("POST /login called with body:", req.body); // Log initial
+  console.log("POST /login called with body:", req.body); 
 
   const { username, password } = req.body;
 
@@ -15,14 +15,14 @@ router.post("/login", async (req, res) => {
 
   try {
     const user = await userRepo.getUserByUsernameAndPassword(username, password);
-    console.log("User fetched from database:", user); // Log pour vérifier si l'utilisateur existe
+    console.log("User fetched from database:", user); 
 
     if (!user) {
       console.warn("Invalid credentials for username:", username);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Obtenir le statut `isAdmin` depuis la base de données
+   
     const isAdmin = await userRepo.getIsAdminByUsername(username);
     console.log(`Admin status for user ${username}:`, isAdmin);
 
@@ -33,9 +33,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Récupérer les informations de l'utilisateur connecté
+
 router.get("/current-user", async (req, res) => {
-  const username = req.query.username; // Ajoutez un query paramètre pour identifier l'utilisateur
+  const username = req.query.username; 
   console.log("Current user endpoint called with username:", username);
 
   if (!username) {
@@ -57,7 +57,7 @@ router.get("/current-user", async (req, res) => {
   }
 });
 
-// Récupérer le statut d'administrateur d'un utilisateur
+
 router.get("/is-admin/:username", async (req, res) => {
   const { username } = req.params;
   console.log("GET /is-admin called with username:", username);
@@ -81,7 +81,7 @@ router.get("/is-admin/:username", async (req, res) => {
   }
 });
 
-// Déconnexion
+
 router.post("/logout", (req, res) => {
   console.log("POST /logout called");
   res.json({ message: "Logged out successfully" });

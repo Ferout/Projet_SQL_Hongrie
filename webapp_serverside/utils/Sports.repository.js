@@ -1,7 +1,6 @@
 const pool = require(__dirname + '\\db.include.js');
 
 module.exports = {
-  // Fonction pour obtenir tous les sports
   getAllSports() {
     return new Promise((resolve, reject) => {
       pool.query('SELECT * FROM sports', (error, rows) => {
@@ -13,8 +12,6 @@ module.exports = {
       });
     });
   },
-
-  // Fonction pour ajouter un sport
   addSport(sport) {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO sports (Sport_name, Number_of_player, Minimum_weight, Maximum_weight, Team_sport) VALUES (?, ?, ?, ?, ?)';
@@ -34,7 +31,6 @@ module.exports = {
     });
   },
 
-  // Fonction pour mettre à jour un sport
   updateSport(ID_sport, sport) {
     return new Promise((resolve, reject) => {
       const sql = 'UPDATE sports SET Sport_name = ?, Number_of_player = ?, Minimum_weight = ?, Maximum_weight = ?, Team_sport = ? WHERE ID_sport = ?';
@@ -57,7 +53,6 @@ module.exports = {
 
   async deleteSport(ID_sport) {
     return new Promise((resolve, reject) => {
-      // Commencer par supprimer les participations associées à l'événement du sport
       const deleteParticipateQuery = `
         DELETE FROM Participate 
         WHERE ID_events IN (SELECT ID_events FROM Events WHERE ID_sport = ?)
@@ -68,7 +63,6 @@ module.exports = {
           return reject(error);
         }
   
-        // Supprimer les événements associés au sport
         const deleteEventsQuery = 'DELETE FROM Events WHERE ID_sport = ?';
         pool.query(deleteEventsQuery, [ID_sport], (error, result) => {
           if (error) {
@@ -76,7 +70,6 @@ module.exports = {
             return reject(error);
           }
   
-          // Supprimer enfin le sport
           const deleteSportQuery = 'DELETE FROM sports WHERE ID_sport = ?';
           pool.query(deleteSportQuery, [ID_sport], (error, result) => {
             if (error) {

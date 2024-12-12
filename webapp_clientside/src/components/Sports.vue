@@ -22,21 +22,21 @@
 
     <h2>Sports</h2>
     <div class="sports-list">
-      <ul>
-        <li v-for="sport in sports" :key="sport.ID_sport">
-          <div>
-            <strong>{{ sport.Sport_name }}</strong><br>
-            <span>Team Sport: {{ sport.Team_sport ? 'Yes' : 'No' }}</span><br>
-            <span>Number of Players: {{ sport.Number_of_player }}</span><br>
-            <span v-if="sport.Minimum_weight">Min Weight: {{ sport.Minimum_weight }} kg</span><br>
-            <span v-if="sport.Maximum_weight">Max Weight: {{ sport.Maximum_weight }} kg</span><br>
-            <div class="actions" v-if="isAdmin">
-              <button @click="editSport(sport)">Edit</button>
-              <button @click="deleteSport(sport.ID_sport)">Delete</button>
-            </div>
-          </div>
-        </li>
-      </ul>
+      <div
+        v-for="sport in sports"
+        :key="sport.ID_sport"
+        class="sport-card"
+      >
+        <p><strong>{{ sport.Sport_name }}</strong></p>
+        <p>Team Sport: {{ sport.Team_sport ? 'Yes' : 'No' }}</p>
+        <p>Number of Players: {{ sport.Number_of_player }}</p>
+        <p v-if="sport.Minimum_weight">Min Weight: {{ sport.Minimum_weight }} kg</p>
+        <p v-if="sport.Maximum_weight">Max Weight: {{ sport.Maximum_weight }} kg</p>
+        <div class="actions" v-if="isAdmin">
+          <button @click="editSport(sport)">Edit</button>
+          <button @click="deleteSport(sport.ID_sport)">Delete</button>
+        </div>
+      </div>
     </div>
 
     <h3 v-if="isAdmin">Add New Sport</h3>
@@ -62,6 +62,10 @@
     </form>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
+
+    <footer class="footer">
+      <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
+    </footer>
   </div>
 </template>
 
@@ -70,7 +74,7 @@ export default {
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
-      sports: [], // Liste des sports
+      sports: [],
       newSport: {
         Sport_name: "",
         Number_of_player: null,
@@ -78,16 +82,16 @@ export default {
         Maximum_weight: null,
         Team_sport: false,
       },
-      editingSport: null, // Sport en cours d'édition
-      isAdmin: false, // Défini par défaut comme non-admin
+      editingSport: null,
+      isAdmin: false,
     };
   },
   methods: {
     async fetchSports() {
       try {
-        const response = await fetch("http://localhost:3000/api/sports");
+        const response = await fetch("http://localhost:3000/sports");
         const data = await response.json();
-        this.sports = data; // Affectation des sports récupérés
+        this.sports = data;
       } catch (error) {
         console.error("Error fetching sports:", error);
       }
@@ -107,39 +111,39 @@ export default {
     },
     async addSport() {
       try {
-        const response = await fetch("http://localhost:3000/api/sports", {
+        const response = await fetch("http://localhost:3000/sports", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.newSport),
         });
         if (response.ok) {
-          this.fetchSports(); // Rafraîchissement de la liste des sports
+          this.fetchSports();
           this.newSport = {
             Sport_name: "",
             Number_of_player: null,
             Minimum_weight: null,
             Maximum_weight: null,
             Team_sport: false,
-          }; // Réinitialisation du formulaire
+          };
         }
       } catch (error) {
         console.error("Error adding sport:", error);
       }
     },
     async editSport(sport) {
-      this.editingSport = { ...sport }; // Pré-remplir le formulaire avec les données de sport à modifier
+      this.editingSport = { ...sport };
     },
     async updateSport() {
       try {
-        const response = await fetch(`http://localhost:3000/api/sports/${this.editingSport.ID_sport}`, {
+        const response = await fetch(`http://localhost:3000/sports/${this.editingSport.ID_sport}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.editingSport), // Envoi des données mises à jour
+          body: JSON.stringify(this.editingSport),
         });
 
         if (response.ok) {
-          this.fetchSports(); // Rafraîchissement après mise à jour
-          this.editingSport = null; // Réinitialiser le formulaire
+          this.fetchSports();
+          this.editingSport = null;
         } else {
           console.error("Error updating sport", response);
         }
@@ -149,29 +153,28 @@ export default {
     },
     async deleteSport(sportId) {
       try {
-        const response = await fetch(`http://localhost:3000/api/sports/${sportId}`, {
+        const response = await fetch(`http://localhost:3000/sports/${sportId}`, {
           method: "DELETE",
         });
         if (response.ok) {
-          this.fetchSports(); // Rafraîchissement après suppression
+          this.fetchSports();
         }
       } catch (error) {
         console.error("Error deleting sport:", error);
       }
     },
     goToHomePage() {
-      this.$router.push("/"); // Retour à la page d'accueil
+      this.$router.push("/");
     },
   },
   mounted() {
-    this.fetchSports(); // Chargement des sports dès que le composant est monté
-    this.loadAdminStatus(); // Chargement du statut admin
+    this.fetchSports();
+    this.loadAdminStatus();
   },
 };
 </script>
 
 <style scoped>
-/* Styles pour la page des sports */
 .header {
   background-color: #42b883;
   color: white;
@@ -220,22 +223,34 @@ export default {
   margin: 40px;
 }
 
-.sports-list ul {
-  list-style-type: none;
+.sports-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
   padding: 0;
+  list-style: none;
+  margin: 0;
 }
 
-.sports-list li {
-  padding: 10px;
-  cursor: pointer;
+.sport-card {
+  flex: 1 1 calc(33.333% - 20px);
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.sports-list li:hover {
-  background-color: #f0f0f0;
-}
-
-.actions {
-  margin-top: 10px;
+.sport-card p {
+  margin: 5px 0;
+  font-size: 16px;
 }
 
 .actions button {
@@ -250,10 +265,6 @@ export default {
 
 .actions button:hover {
   background-color: #36a76e;
-}
-
-form {
-  margin-top: 20px;
 }
 
 form input {
@@ -291,5 +302,25 @@ form button:hover {
 
 .home-button:hover {
   background-color: #36a76e;
+}
+
+.sports-container {
+  position: relative;
+  min-height: 100vh; 
+  padding-bottom: 120px; 
+  margin: 0; 
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background-color: #42b883;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 </style>

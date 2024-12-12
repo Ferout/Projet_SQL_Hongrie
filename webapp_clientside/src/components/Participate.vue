@@ -22,29 +22,37 @@
 
     <h2>Participation</h2>
     <div class="participation-list">
-      <ul>
-        <li v-for="participation in participations" :key="`${participation.athlete_id}-${participation.event_id}`">
-          {{ participation.First_name }} {{ participation.Family_name }} - {{ participation.Event_name }} - {{ participation.Result }}
-          <div class="actions" v-if="isAdmin">
-            <button @click="deleteParticipation(participation)">Supprimer</button>
-            <button @click="editParticipation(participation)">Modifier</button>
-          </div>
-        </li>
-      </ul>
+      <li
+        v-for="participation in participations"
+        :key="`${participation.athlete_id}-${participation.event_id}`"
+        class="participation-card"
+      >
+        <p><strong>Athlete:</strong> {{ participation.First_name }} {{ participation.Family_name }}</p>
+        <p><strong>Event:</strong> {{ participation.Event_name }}</p>
+        <p><strong>Result:</strong> {{ participation.Result }}</p>
+        <div class="actions" v-if="isAdmin">
+          <button @click="editParticipation(participation)">Edit</button>
+          <button @click="deleteParticipation(participation)">Delete</button>
+        </div>
+      </li>
     </div>
 
     <div class="actions" v-if="isAdmin">
-      <h3>{{ editing ? "Modifier" : "Ajouter" }} une participation</h3>
+      <h3>{{ editing ? "Edit" : "Add" }} participation</h3>
       <form @submit.prevent="handleSubmit">
         <input v-model="form.athlete_id" placeholder="Athlete ID" required />
         <input v-model="form.event_id" placeholder="Event ID" required />
         <input v-model="form.result" placeholder="Result" required />
-        <button type="submit">{{ editing ? "Mettre à jour" : "Ajouter" }}</button>
-        <button v-if="editing" @click="resetForm">Annuler</button>
+        <button type="submit">{{ editing ? "Edit" : "Add" }}</button>
+        <button v-if="editing" @click="resetForm">Cancel</button>
       </form>
     </div>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
+
+    <footer class="footer">
+      <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
+    </footer>
   </div>
 </template>
 
@@ -57,13 +65,13 @@ export default {
       form: { athlete_id: "", event_id: "", result: "" },
       editing: false,
       editId: null,
-      isAdmin: false, // Défini par défaut comme non-admin
+      isAdmin: false,
     };
   },
   methods: {
     async fetchParticipations() {
       try {
-        const response = await fetch("http://localhost:3000/api/participations");
+        const response = await fetch("http://localhost:3000/participations");
         this.participations = await response.json();
       } catch (err) {
         console.error("Error fetching participations:", err);
@@ -93,7 +101,7 @@ export default {
     },
     async addParticipation(participation) {
       try {
-        await fetch("http://localhost:3000/api/participations", {
+        await fetch("http://localhost:3000/participations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(participation),
@@ -104,7 +112,7 @@ export default {
     },
     async updateParticipation(id, participation) {
       try {
-        await fetch(`http://localhost:3000/api/participations/${id.athlete_id}/${id.event_id}`, {
+        await fetch(`http://localhost:3000/participations/${id.athlete_id}/${id.event_id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(participation),
@@ -115,7 +123,7 @@ export default {
     },
     async deleteParticipation(participation) {
       try {
-        await fetch(`http://localhost:3000/api/participations/${participation.athlete_id}/${participation.event_id}`, {
+        await fetch(`http://localhost:3000/participations/${participation.athlete_id}/${participation.event_id}`, {
           method: "DELETE",
         });
         this.fetchParticipations();
@@ -145,7 +153,6 @@ export default {
 </script>
 
 <style scoped>
-/* Styles pour la page de participation */
 .header {
   background-color: #42b883;
   color: white;
@@ -194,19 +201,39 @@ export default {
   margin: 40px;
 }
 
-.participation-list ul {
-  list-style-type: none;
+.participation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; /* Alignement horizontal des cartes */
   padding: 0;
+  list-style: none;
 }
 
-.participation-list li {
-  padding: 10px;
-  cursor: pointer;
+.participation-card {
+  display: flex; /* Utilisation de flexbox */
+  flex-direction: column; /* Aligner les éléments en colonne */
+  justify-content: center; /* Centrer verticalement */
+  align-items: center; /* Centrer horizontalement */
+  flex: 1 1 calc(33.333% - 20px); /* Taille flexible : 3 cartes par ligne */
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  text-align: center; /* Centrer le texte */
 }
 
-.participation-list li:hover {
-  background-color: #f0f0f0;
+.participation-card p {
+  margin: 5px 0;
+  font-size: 16px; /* Taille de police pour une meilleure lisibilité */
 }
+
+.actions {
+  margin-top: 10px;
+}
+
 
 .actions button {
   margin-right: 10px;
@@ -255,5 +282,25 @@ form button:hover {
 
 .home-button:hover {
   background-color: #36a76e;
+}
+
+.participate-container {
+  position: relative;
+  min-height: 100vh; 
+  padding-bottom: 120px; 
+  margin: 0; 
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background-color: #42b883;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 </style>

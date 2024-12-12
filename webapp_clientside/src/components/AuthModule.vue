@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
-    <h1>Authentication Demo</h1>
+    <header class="header">
+        <span>{{ currentDate }}</span>
+      </header>
+    <h1>Authentication</h1>
     <p>{{ msg }}</p>
     <form @submit.prevent="handleLogin">
       <label for="username">Username:</label>
@@ -9,9 +12,16 @@
       <label for="password">Password:</label>
       <input type="password" v-model="password" id="password" required />
 
-      <button type="submit">Login</button>
+      <button type="submit" class="auth-button">Login</button>
     </form>
-    <button v-if="isAuthenticated" @click="handleLogout">Logout</button>
+    <button v-if="isAuthenticated" @click="handleLogout" class="auth-button">Logout</button>
+    <router-link to="/" class="auth-button">Back to Home</router-link>
+
+
+  <footer class="footer">
+      <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
+      </footer>
+
   </div>
 </template>
 
@@ -22,6 +32,7 @@ export default {
   name: "AuthModule",
   data() {
     return {
+      currentDate: new Date().toLocaleDateString(),
       msg: "",
       username: "",
       password: "",
@@ -45,10 +56,10 @@ export default {
         console.log("Login response received:", response.data);
 
         if (response.data.user) {
-          this.isAdmin = response.data.user.isAdmin; // Stocker directement le statut admin
+          this.isAdmin = response.data.user.isAdmin; 
           this.isAuthenticated = true;
-          localStorage.setItem("username", response.data.user.username); // Stocker le nom d'utilisateur
-          localStorage.setItem("isAdmin", this.isAdmin); // Sauvegarder le statut admin
+          localStorage.setItem("username", response.data.user.username); 
+          localStorage.setItem("isAdmin", this.isAdmin);
           this.$router.push({ name: "Home_page" });
         } else {
           this.msg = "Login failed.";
@@ -89,3 +100,61 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+
+.auth-button {
+  background-color: #42b883;
+  color: white;
+  padding: 10px 20px; 
+  text-decoration: none;
+  font-size: 0.9rem; 
+  border-radius: 6px; 
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  background-color: #58c4a3;
+  transform: scale(1.05);
+}
+
+.header {
+    background-color: #42b883;
+    color: white;
+    padding: 12.5px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: left;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .hello home-page {
+  position: relative; 
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.footer {
+  position: absolute; 
+  bottom: 10px; 
+  left: 10px; 
+  right: 10px; 
+  background-color: #42b883;
+  color: white;
+  text-align: center;
+  padding: 20px; 
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; 
+}
+
+
+
+</style>
+

@@ -20,22 +20,24 @@
       </div>
     </header>
 
-    <!-- Section des événements -->
     <h2>Events</h2>
     <div class="events-list">
-      <ul>
-        <li v-for="event in events" :key="event.ID_events">
-          {{ event.event_name }} - {{ formatDate(event.event_date) }} - 
-          {{ event.Number_of_place }} places - {{ event.Event_place }}
-          <div class="actions" v-if="isAdmin">
-            <button class="edit-btn" @click="openEditForm(event)">Edit</button>
-            <button @click="deleteEvent(event.ID_events)">Delete</button>
-          </div>
-        </li>
-      </ul>
+      <div
+        v-for="event in events"
+        :key="event.ID_events"
+        class="event-card"
+      >
+        <p><strong>{{ event.event_name }}</strong></p>
+        <p>Date: {{ formatDate(event.event_date) }}</p>
+        <p>Places: {{ event.Number_of_place }}</p>
+        <p>Location: {{ event.Event_place }}</p>
+        <div class="actions" v-if="isAdmin">
+          <button class="edit-btn" @click="openEditForm(event)">Edit</button>
+          <button @click="deleteEvent(event.ID_events)">Delete</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Formulaire d'ajout d'événement (toujours visible) -->
     <form v-if="isAdmin" @submit.prevent="saveEvent">
       <h3>Add Event</h3>
       <input v-model="addForm.event_name" placeholder="Event Name" required />
@@ -45,7 +47,6 @@
       <button type="submit">Add Event</button>
     </form>
 
-    <!-- Formulaire d'édition d'événement (affiché uniquement si un événement est sélectionné pour modification) -->
     <div v-if="editing">
       <h2>Edit Event</h2>
       <form @submit.prevent="updateEvent">
@@ -59,6 +60,10 @@
     </div>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
+
+    <footer class="footer">
+      <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
+    </footer>
   </div>
 </template>
 
@@ -68,14 +73,12 @@ export default {
     return {
       currentDate: new Date().toLocaleDateString(),
       events: [],
-      // Formulaire d'ajout d'événement
       addForm: {
         event_name: "",
         event_date: "",
         Event_place: "",
         Number_of_place: 0,
       },
-      // Formulaire d'édition d'événement
       editForm: {
         ID_events: null,
         event_name: "",
@@ -84,10 +87,10 @@ export default {
         Number_of_place: 0,
       },
       editing: false,
+      isAdmin: false,
     };
   },
   methods: {
-    // Formater la date pour l'affichage
     formatDate(dateString) {
       const date = new Date(dateString);
       return isNaN(date)
@@ -98,36 +101,31 @@ export default {
             day: "2-digit",
           });
     },
-
-    // Récupérer la date dans le format YYYY-MM-DD lors de l'envoi du formulaire
     prepareEventDate(dateString) {
       const date = new Date(dateString);
-      return isNaN(date) ? "" : date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      return isNaN(date) ? "" : date.toISOString().split("T")[0];
     },
-    
     loadAdminStatus() {
-  const username = localStorage.getItem("username");
-  const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
+      const username = localStorage.getItem("username");
+      const isAdmin = parseInt(localStorage.getItem("isAdmin"), 10);
 
-  if (!username) {
-    console.warn("Username not found in localStorage");
-    this.isAdmin = false;
-    return;
-  }
+      if (!username) {
+        console.warn("Username not found in localStorage");
+        this.isAdmin = false;
+        return;
+      }
 
-  this.isAdmin = isAdmin === 1;
-  console.log("Admin status loaded:", this.isAdmin);
-  },
-
+      this.isAdmin = isAdmin === 1;
+      console.log("Admin status loaded:", this.isAdmin);
+    },
     async saveEvent() {
       try {
-        // Avant de soumettre, formatons la date pour l'ajouter au bon format
         const formattedEventDate = this.prepareEventDate(this.addForm.event_date);
         this.addForm.event_date = formattedEventDate;
 
         const url = this.editing
-          ? `http://localhost:3000/api/events/${this.editForm.ID_events}`
-          : "http://localhost:3000/api/events";
+          ? `http://localhost:3000/events/${this.editForm.ID_events}`
+          : "http://localhost:3000/events";
         const method = this.editing ? "PUT" : "POST";
         const response = await fetch(url, {
           method,
@@ -146,16 +144,14 @@ export default {
         console.error("Error saving event:", error);
       }
     },
-
     async updateEvent() {
       try {
-        // Avant de soumettre, formatons la date pour l'ajouter au bon format
         const formattedEventDate = this.prepareEventDate(this.editForm.event_date);
         this.editForm.event_date = formattedEventDate;
 
-        const response = await fetch(`http://localhost:3000/api/events/${this.editForm.ID_events}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch(`http://localhost:3000/events/${this.editForm.ID_events}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.editForm),
         });
 
@@ -163,22 +159,19 @@ export default {
           this.fetchEvents();
           this.resetForm();
         } else {
-          console.error('Erreur de mise à jour de l\'événement', response);
+          console.error("Erreur de mise à jour de l'événement", response);
         }
       } catch (error) {
-        console.error('Erreur de mise à jour:', error);
+        console.error("Erreur de mise à jour:", error);
       }
     },
-
     openEditForm(event) {
-      // Copier les données de l'événement dans le formulaire d'édition
       this.editForm = { ...event };
       this.editing = true;
     },
-
     async deleteEvent(ID_events) {
       try {
-        const response = await fetch(`http://localhost:3000/api/events/${ID_events}`, {
+        const response = await fetch(`http://localhost:3000/events/${ID_events}`, {
           method: "DELETE",
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -187,11 +180,9 @@ export default {
         console.error("Error deleting event:", error);
       }
     },
-
     cancelEdit() {
       this.resetForm();
     },
-
     resetForm() {
       this.addForm = {
         event_name: "",
@@ -208,14 +199,12 @@ export default {
       };
       this.editing = false;
     },
-
     goToHomePage() {
       this.$router.push("/");
     },
-
     async fetchEvents() {
       try {
-        const response = await fetch("http://localhost:3000/api/events");
+        const response = await fetch("http://localhost:3000/events");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         this.events = await response.json();
       } catch (error) {
@@ -224,82 +213,57 @@ export default {
     },
   },
   mounted() {
-  this.fetchEvents();
-  this.loadAdminStatus();
-},
+    this.fetchEvents();
+    this.loadAdminStatus();
+  },
 };
-
 </script>
 
 <style scoped>
-/* Styles pour la page des événements */
-.header {
-  background-color: #42b883;
-  color: white;
-  padding: 5px 10px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.events-list {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
 }
 
-.header-content {
+.event-card {
+  flex: 1 1 calc(33.333% - 20px);
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  text-align: center;
   display: flex;
-  justify-content: space-between;
-  width: 95%;
-  align-items: center;
-}
-
-.nav-buttons {
-  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.nav-buttons button {
-  background-color: #42b883;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
+.event-card p {
+  margin: 5px 0;
+  font-size: 16px;
 }
 
-.nav-buttons button:hover {
-  background-color: #36a76e;
-}
-.events-list {
-  padding: 50px 10px 20px;
+.actions {
+  margin-top: 10px;
 }
 
 .actions button {
-  margin-left: 10px;
-}
-
-form {
-  margin-top: 20px;
-}
-
-form input {
-  margin: 5px 0;
-  padding: 10px;
-  width: 100%;
-  max-width: 400px;
-}
-
-form button {
+  margin-right: 10px;
   background-color: #42b883;
   color: white;
+  padding: 5px 10px;
   border: none;
-  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #36a76e;
 }
 
 .home-button {
@@ -318,26 +282,22 @@ form button {
   background-color: #36a76e;
 }
 
-.actions {
-  display: flex;
-  justify-content: center; 
-  gap: 10px;
-  margin-top: 10px; 
+.events-container {
+  position: relative;
+  min-height: 100vh; 
+  padding-bottom: 120px; 
+  margin: 0; 
 }
 
-.actions button {
-  margin-right: 10px;
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
   background-color: #42b883;
   color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
 }
-
-.actions button:hover {
-  background-color: #36a76e;
-}
-
-
 </style>

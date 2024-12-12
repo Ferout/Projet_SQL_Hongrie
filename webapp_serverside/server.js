@@ -40,13 +40,20 @@ auth.initializeAuthentications(app);
 
 // *** ROUTES ***
 // Routes pour les services d'authentification
-app.use('/auth', require('./controllers/auth.route'));
+
 
 // Routes statiques
 app.use('/static', express.static(__dirname + '/static'));
 
-// API principale
-app.use('/api', require('./controllers/api.route'));
+
+
+app.use('/athletes', require('./controllers/Athletes.route'));
+app.use('/sports', require('./controllers/Sports.route'));
+app.use('/events', require('./controllers/Events.route'));
+app.use('/countries', require('./controllers/Countries.route'));
+app.use('/participations', require('./controllers/Participate.route'));
+app.use('/auth', require('./controllers/auth.route'));
+
 
 // Route d'accueil
 app.get('/', (req, res) => {

@@ -37,7 +37,6 @@
       Add Country
     </button>
 
-    <!-- Formulaire Ajouter un Pays -->
     <div v-if="showForm" class="form-container">
       <input v-model="newCountry" placeholder="Enter country name" />
       <div class="actions">
@@ -46,7 +45,6 @@
       </div>
     </div>
 
-    <!-- Formulaire Modifier un Pays -->
     <div v-if="editFormVisible" class="form-container">
       <input v-model="editedCountryName" placeholder="Edit country name" />
       <div class="actions">
@@ -56,6 +54,10 @@
     </div>
 
     <button @click="goToHomePage" class="home-button">Back to Home</button>
+
+    <footer class="footer">
+      <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
+    </footer>
   </div>
 </template>
 
@@ -72,13 +74,13 @@ export default {
       newCountry: "",
       countryToEdit: null,
       editedCountryName: "",
-      isAdmin: false, // Défaut non-admin
+      isAdmin: false, 
     };
   },
   methods: {
     async fetchCountries() {
       try {
-        const response = await axios.get("http://localhost:3000/api/countries");
+        const response = await axios.get("http://localhost:3000/countries");
         this.countries = response.data || [];
       } catch (error) {
         console.error("Error fetching countries:", error);
@@ -106,7 +108,7 @@ export default {
       if (!this.newCountry) return;
 
       try {
-        const response = await axios.post("http://localhost:3000/api/countries", {
+        const response = await axios.post("http://localhost:3000/countries", {
           Country_name: this.newCountry,
         });
         this.countries.push(response.data);
@@ -118,7 +120,7 @@ export default {
     },
     async deleteCountry(countryId) {
       try {
-        await axios.delete(`http://localhost:3000/api/countries/${countryId}`);
+        await axios.delete(`http://localhost:3000/countries/${countryId}`);
         this.countries = this.countries.filter(
           (country) => country.ID_country !== countryId
         );
@@ -137,7 +139,7 @@ export default {
       const updatedCountry = { Country_name: this.editedCountryName };
       try {
         const response = await axios.put(
-          `http://localhost:3000/api/countries/${this.countryToEdit.ID_country}`,
+          `http://localhost:3000/countries/${this.countryToEdit.ID_country}`,
           updatedCountry
         );
         const index = this.countries.findIndex(
@@ -171,7 +173,6 @@ export default {
   },
 };
 </script>
-
 
 
 <style scoped>
@@ -301,4 +302,27 @@ form button:hover {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.countries-container {
+  position: relative;
+  min-height: 100vh; 
+  padding-bottom: 120px; 
+  margin: 0; 
+}
+
+.footer {
+  position: absolute; 
+  bottom: 10px; 
+  left: 10px; 
+  right: 10px; 
+  background-color: #42b883;
+  color: white;
+  text-align: center;
+  padding: 20px; 
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; 
+}
+
+
+
 </style>

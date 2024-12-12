@@ -1,23 +1,23 @@
 <template>
+  
     <div class="home-page">
-      <!-- Header -->
       <header class="header">
-        <router-link to="/authmodule" class="auth-button">AuthModule</router-link>
         <span>{{ currentDate }}</span>
+        <router-link to="/authmodule" class="auth-button">AuthModule</router-link>
       </header>
   
-      <!-- Main Content -->
+
       <div class="home-container">
         <h1>Information about the Olympics Games of 2024</h1>
   
-        <!-- Paragraph inside a centered rectangle -->
+  
         <div class="info-box">
           <p>
             You will find, via the different sections below, some information about the athletes, the sports, the countries, and the events that will occur during those Olympic Games.
           </p>
         </div>
   
-        <!-- Navigation Buttons -->
+
         <div class="button-container">
           <router-link to="/athletes" class="nav-button">- Athletes -</router-link>
           <router-link to="/countries" class="nav-button">- Countries -</router-link>
@@ -27,7 +27,7 @@
         </div>
       </div>
   
-      <!-- Footer -->
+
       <footer class="footer">
         <p>© 2024 Discover_Olympics_Games - Gomez Luka & Feracci Aurélien</p>
       </footer>
@@ -46,33 +46,37 @@
   </script>
   
   <style scoped>
-  /* Global Page Styling */
+
   .home-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
   }
   
-  /* Header Styling */
+
   .header {
-    background-color: #42b883;
-    color: white;
-    padding: 12.5px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    text-align: left;
-    font-size: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Main Content Styling */
+  background-color: #42b883;
+  color: white;
+  padding: 12.5px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
   .home-container {
     text-align: center;
-    margin-top: 10px; /* Adds space for the fixed header */
+    margin-top: 10px; 
     font-family: 'Arial', sans-serif;
-    flex: 1; /* Ensures main content takes the full available height */
+    flex: 1; 
   }
   
   h1 {
@@ -81,7 +85,7 @@
     margin-bottom: 20px;
   }
   
-  /* Info box centered on the page */
+
   .info-box {
     display: inline-block;
     background-color: #e0e0e0;
@@ -99,7 +103,14 @@
     margin: 0;
   }
   
-  /* Button Container Styling */
+  .auth-button {
+  position: relative; 
+  right: 30px; 
+  background-color: #42b883;
+  color: white;
+}
+
+
   .button-container {
     display: flex;
     justify-content: center;
@@ -120,8 +131,7 @@
   }
   
   .nav-button:hover {
-    background-color: #42b883
-    ;
+    background-color: #42b883;
     transform: scale(1.1);
   }
 
@@ -130,16 +140,18 @@
 }
 
   
-  /* Footer Styling */
-  .footer {
-    background-color: #42b883
-    ;
-    color: white;
-    text-align: center;
-    padding: 20px 0;
-    position: relative;
-    width: 100%;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  }
+.footer {
+  background-color: #42b883;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  position: relative; 
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: -50px; 
+}
+
+
   </style>
   

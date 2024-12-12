@@ -61,7 +61,8 @@ CREATE TABLE Participate (
 CREATE TABLE User(
 ID_user INT PRIMARY KEY,
 Password VARCHAR(50),
-Username VARCHAR(50)
+Username VARCHAR(50),
+IsAdmin boolean
 );
 
 -- Insertion into Sport table
@@ -109,8 +110,9 @@ VALUES
 (4, 4, '1st place'),
 (5, 4, '4st place');
 
-INSERT INTO User (ID_user, Password, Username) Values
-(1, 'Wifi', 'Messi');
+INSERT INTO User (ID_user, Password, Username,IsAdmin) Values
+(1, 'wifi', 'Messi','0'),
+(2, 'test', 'Aurélien','1');
 
 -- Select all data from Athletes table
 SELECT * FROM Athletes;

@@ -44,7 +44,9 @@
       <input v-model="addForm.event_date" type="date" required />
       <input v-model="addForm.Event_place" placeholder="Event Place" required />
       <input v-model.number="addForm.Number_of_place" type="number" placeholder="Number of Places" required />
+      <div class="actions">
       <button type="submit">Add Event</button>
+      </div>
     </form>
 
     <div v-if="editing">

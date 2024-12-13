@@ -32,10 +32,17 @@
         <p>Number of Players: {{ sport.Number_of_player }}</p>
         <p v-if="sport.Minimum_weight">Min Weight: {{ sport.Minimum_weight }} kg</p>
         <p v-if="sport.Maximum_weight">Max Weight: {{ sport.Maximum_weight }} kg</p>
+
+
+        <div class="actions">
+        <button @click="editSport(sport)">Edit</button>
+        </div>
+
+
         <div class="actions" v-if="isAdmin">
-          <button @click="editSport(sport)">Edit</button>
           <button @click="deleteSport(sport.ID_sport)">Delete</button>
         </div>
+
       </div>
     </div>
 
